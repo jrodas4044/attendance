@@ -41,14 +41,7 @@ Amplify.configure({
           <FaceLivenessDetector
             sessionId={session?.SessionId ? session.SessionId : uuid()}
             region="us-east-1"
-            onAnalysisComplete={() => {
 
-              console.log('User is live');
-              // get photo from webcam
-
-              // send photo to backend
-
-            }}
             onError={(error) => {
               console.error(error);
             }}
