@@ -10,7 +10,8 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 
 import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
-import useSession from './useSession'; // Asegúrate de que la ruta de importación sea correcta
+import useSession from './useSession';
+import {uuid} from "uuidv4"; // Asegúrate de que la ruta de importación sea correcta
 
 
 Amplify.configure(outputs);
@@ -29,7 +30,8 @@ Amplify.configure({
 
    const { session, loading, error } = useSession();
   return (
-    <ThemeProvider>
+    <ThemeProvider
+    >
 
       {loading ? (
         <Loader />
@@ -37,7 +39,7 @@ Amplify.configure({
         <>
           <h1>Face Recognition</h1>
           <FaceLivenessDetector
-            sessionId={session?.SessionId}
+            sessionId={session?.SessionId ? session.SessionId : uuid()}
             region="us-east-1"
             onAnalysisComplete={() => {
 
