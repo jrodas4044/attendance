@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 import { get } from 'aws-amplify/api';
+
+interface Session {
+  SessionId: string;
+  // Add other properties as needed
+}
+
 const useSession = () => {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {

@@ -26,8 +26,8 @@ Amplify.configure({
 
  export default function Recognition() {
 
-  const { session, loading, error } = useSession();
-  console.log(session);
+
+   const { session, loading, error } = useSession();
   return (
     <ThemeProvider>
 
