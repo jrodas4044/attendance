@@ -21,9 +21,11 @@ const useSession = () => {
         });
         const { body } = await restOperation.response;
         const json = await body.json();
+        // @ts-ignore
         setSession(json);
       } catch (error) {
         console.error('Error fetching session:', error);
+        // @ts-ignore
         setError(error);
       } finally {
         setLoading(false);

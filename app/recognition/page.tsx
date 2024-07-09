@@ -24,10 +24,12 @@ Amplify.configure({
   },
 });
 
+async function handleAnalysisComplete() {
+  console.log('Analysis complete');
+}
+
 
  export default function Recognition() {
-
-
    const { session, loading, error } = useSession();
   return (
     <ThemeProvider
@@ -41,7 +43,7 @@ Amplify.configure({
           <FaceLivenessDetector
             sessionId={session?.SessionId ? session.SessionId : uuid()}
             region="us-east-1"
-
+            onAnalysisComplete={handleAnalysisComplete}
             onError={(error) => {
               console.error(error);
             }}
