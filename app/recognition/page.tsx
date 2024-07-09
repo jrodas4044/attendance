@@ -37,7 +37,7 @@ Amplify.configure({
         <>
           <h1>Face Recognition</h1>
           <FaceLivenessDetector
-            sessionId={session.SessionId}
+            sessionId={session?.SessionId}
             region="us-east-1"
             onAnalysisComplete={() => {
 
