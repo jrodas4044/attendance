@@ -13,7 +13,7 @@ import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
 import useSession from './useSession';
 import {uuid} from "uuidv4";
 import {get} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import {fetchUserAttributes} from 'aws-amplify/auth';
 
 
 Amplify.configure(outputs);
@@ -37,7 +37,7 @@ interface UserAttributes {
 
 
    // state to store the user attributes
-    const [userAttributes, setUserAttributes] = useState(null);
+    const [userAttributes, setUserAttributes] = useState<UserAttributes | null>(null);
     useEffect(() => {
       // fetch the user attributes when the component mounts
       fetchUserAttributes().then((attributes ) => {
@@ -75,7 +75,7 @@ interface UserAttributes {
 
           <div className={"flex items-center justify-center my-6"}>
             <img
-              src={userAttributes.picture}
+              src={userAttributes?.picture}
               alt="User"
               width="100"
               height="100"
