@@ -74,13 +74,17 @@ interface UserAttributes {
           <h1 className={"text-3xl font-bold  text-gray-800 text-center"}>Marcar Asistencia</h1>
 
           <div className={"flex items-center justify-center my-6"}>
-            <img
-              src={userAttributes?.picture}
-              alt="User"
-              width="100"
-              height="100"
-              className={"rounded-full border-4 border-white w-24 h-24 overflow-hidden"}
-            />
+
+
+            {userAttributes?.picture ? (
+              <img
+                src={userAttributes.picture}
+                alt="User"
+                width="100"
+                height="100"
+                className={"rounded-full border-4 border-white w-24 h-24 overflow-hidden"}
+              />
+            ) : null}
 
             <div>
               <div className={"ml-4"}>

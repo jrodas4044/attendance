@@ -13,13 +13,26 @@ const schema = a.schema({
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
+
+
    Course: a
     .model({
       name: a.string().required(),
-      scheduleStart: a.datetime(),
-      scheduleEnd: a.datetime(),
+      days: a.enum(["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]),
+      scheduleStart: a.time(),
+      scheduleEnd: a.time(),
+      attendanceControls: a.hasMany('AttendanceControl', 'courseId' ),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+    AttendanceControl: a
+      .model({
+        courseId: a.id(),
+        course: a.belongsTo('Course',  'courseId' ),
+        date: a.date(),
+        time: a.time(),
+        available: a.boolean().default(true),
+      }).authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
