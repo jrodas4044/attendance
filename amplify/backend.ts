@@ -2,6 +2,8 @@ import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource.js';
 import { data } from './data/resource.js';
 import { myApiFunction } from "./functions/api-functions/resource";
+import { getFaceLiveness } from "./functions/getFaceLiveness/resource";
+import { compareFaces } from "./functions/compareFaces/resource";
 import { Stack } from "aws-cdk-lib";
 import {
   CorsHttpMethod,
@@ -20,7 +22,16 @@ const backend = defineBackend({
   auth,
   data,
   myApiFunction,
+  getFaceLiveness,
+  compareFaces,
 });
+
+backend.getFaceLiveness.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["rekognition:GetFaceLivenessSession"],
+    resources: ["*"],
+  })
+);
 
 // Add rekognition:StartFaceLivenessSession permission to the unauthenticated User role
 backend.auth.resources.unauthenticatedUserIamRole.addToPrincipalPolicy(
@@ -34,6 +45,22 @@ backend.auth.resources.unauthenticatedUserIamRole.addToPrincipalPolicy(
 backend.auth.resources.authenticatedUserIamRole.addToPrincipalPolicy(
   new PolicyStatement({
     actions: ["rekognition:StartFaceLivenessSession"],
+    resources: ["*"],
+  })
+);
+
+// Add rekognition:CompareFaces permission to the compareFaces function
+backend.compareFaces.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["rekognition:CompareFaces"],
+    resources: ["*"],
+  })
+);
+
+// add s3 permission tu compareFaces function
+backend.compareFaces.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["s3:GetObject", "S3:ReadObject"],
     resources: ["*"],
   })
 );
@@ -62,6 +89,20 @@ backend.myApiFunction.resources.lambda.addToRolePolicy(
   })
 );
 
+
+backend.getFaceLiveness.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["rekognition:GetFaceLivenessSessionResults"],
+    resources: ["*"],
+  })
+);
+
+backend.getFaceLiveness.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["s3:GetObject", "s3:PutObject"],
+    resources: ["*"],
+  })
+);
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
 
@@ -110,13 +151,24 @@ httpApi.addRoutes({
   authorizer: iamAuthorizer,
 });
 
+// Add getFaceLiveness function to the API
+const getFaceLivenessIntegration = new HttpLambdaIntegration(
+  "GetFaceLivenessIntegration",
+  backend.getFaceLiveness.resources.lambda
+);
+
+httpApi.addRoutes({
+  path: "/session/{sessionId}/liveness",
+  methods: [HttpMethod.GET],
+  integration: getFaceLivenessIntegration,
+  authorizer: iamAuthorizer,
+});
+
 const apiPolicy = new Policy(apiStack, "ApiPolicy", {
   statements: [
     new PolicyStatement({
       actions: ["execute-api:Invoke"],
-      resources: [
-        `${httpApi.arnForExecuteApi("*", "/session")}`,
-      ],
+      resources: ["*"],
     }),
   ],
 });

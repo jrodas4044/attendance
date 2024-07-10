@@ -1,0 +1,10 @@
+ aws rekognition create-collection --collection-id "faces-test" 
+
+
+aws rekognition create-collection --collection-id "collection-name" --tags "{"key1":"value1","key2":"value2"}" 
+
+    "CollectionArn": "aws:rekognition:us-east-1:102837709458:collection/faces-test",
+
+aws rekognition index-faces --image '{"S3Object":{"Bucket":"bucket-name","Name":"file-name"}}' --collection-id "collection-id" \
+                                --max-faces 1 --quality-filter "AUTO" --detection-attributes "ALL" \ 
+                                --external-image-id "example-image.jpg" --profile profile-name
