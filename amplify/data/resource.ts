@@ -14,7 +14,10 @@ const schema = a.schema({
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
-
+  Career: a.model({
+    name: a.string().required(),
+    courses: a.hasMany('Course', 'careerId' ),
+  }).authorization((allow) => [allow.publicApiKey()]),
 
    Course: a
     .model({
@@ -23,6 +26,9 @@ const schema = a.schema({
       scheduleStart: a.time(),
       scheduleEnd: a.time(),
       attendanceControls: a.hasMany('AttendanceControl', 'courseId' ),
+      careerId: a.id(),
+      career: a.belongsTo('Career', 'careerId'),
+      students: a.hasMany('Student', 'courseId'),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
@@ -33,6 +39,7 @@ const schema = a.schema({
         date: a.date(),
         time: a.time(),
         available: a.boolean().default(true),
+        studentAttendances: a.hasMany('StudentAttendance', 'attendanceControlId'),
       }).authorization((allow) => [allow.publicApiKey()]),
 
     Student: a.model({
@@ -41,11 +48,13 @@ const schema = a.schema({
       carne: a.string(),
       email: a.string(),
       pictureName: a.string(),
-      courses: a.hasMany('Course', 'studentId' ),
+      courseId: a.id(),
+      courses: a.belongsTo('Course', 'courseId'),
+      StudentAttendances: a.hasMany('StudentAttendance', "studentId"),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
-    Attendance: a.model({
+    StudentAttendance: a.model({
       studentId: a.id(),
       student: a.belongsTo('Student', 'studentId'),
       attendanceControlId: a.id(),
@@ -54,16 +63,6 @@ const schema = a.schema({
       isPresent: a.boolean().default(false),
     }).authorization((allow) => [allow.publicApiKey()]),
 
-  justificationForLackOfAttendance: a
-    .model({
-      studentId: a.id(),
-      student: a.belongsTo('Student', 'studentId'),
-      attendanceControlId: a.id(),
-      attendanceControl: a.belongsTo('AttendanceControl', 'attendanceControlId'),
-      date: a.date(),
-      justification: a.string(),
-      file: a.string(),
-    }).authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
