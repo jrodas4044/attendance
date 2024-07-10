@@ -28,15 +28,19 @@ Amplify.configure({
 
 const client = generateClient<Schema>()
 
+interface UserAttributes {
+  picture?: string;
+}
 
  export default function Recognition() {
    const { session, loading, error } = useSession();
+
 
    // state to store the user attributes
     const [userAttributes, setUserAttributes] = useState(null);
     useEffect(() => {
       // fetch the user attributes when the component mounts
-      fetchUserAttributes().then((attributes) => {
+      fetchUserAttributes().then((attributes ) => {
         // @ts-ignore
         setUserAttributes(attributes);
         console.log(attributes);
@@ -58,6 +62,7 @@ const client = generateClient<Schema>()
    }
 
    // @ts-ignore
+   // @ts-ignore
    return (
     <ThemeProvider
     >
@@ -70,7 +75,7 @@ const client = generateClient<Schema>()
 
           <div className={"flex items-center justify-center my-6"}>
             <img
-              src={userAttributes?.picture}
+              src={userAttributes.picture}
               alt="User"
               width="100"
               height="100"
