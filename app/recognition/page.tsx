@@ -37,6 +37,7 @@ const client = generateClient<Schema>()
     useEffect(() => {
       // fetch the user attributes when the component mounts
       fetchUserAttributes().then((attributes) => {
+        // @ts-ignore
         setUserAttributes(attributes);
         console.log(attributes);
       });
@@ -55,6 +56,7 @@ const client = generateClient<Schema>()
       console.log(json);
    }
 
+   // @ts-ignore
    return (
     <ThemeProvider
     >

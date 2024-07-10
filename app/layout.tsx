@@ -29,7 +29,7 @@ export default function RootLayout({
 
       </head>
       <body>
-      <Authenticator>
+      <Authenticator hideSignUp>
         {children}
       </Authenticator>
       </body>
