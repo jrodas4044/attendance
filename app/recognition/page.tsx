@@ -44,7 +44,8 @@ const client = generateClient<Schema>()
     }, []);
 
    const handleAnalysisComplete = async () => {
-    const { SessionId } = session;
+    const { SessionId } = session!;
+
     console.log(`Analysis complete for session ${SessionId}`);
     // call getFaceLiveness API
      const restOperation = get({
