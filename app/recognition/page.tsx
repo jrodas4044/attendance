@@ -12,7 +12,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
 import useSession from './useSession';
 import {uuid} from "uuidv4";
-import {get} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
+import {post} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
 import {fetchUserAttributes, getCurrentUser} from 'aws-amplify/auth';
 
 
@@ -90,9 +90,13 @@ interface UserAttributes {
       // call compareFaces API
       // llamar al api rest para comparar las caras
 
-     const restOperation2 = get({
+     const restFaceCompare = post({
         apiName: "myHttpApi",
         path: `compareFaces/${ sessionId }`,
+        body: {
+          referenceImage,
+          targetImage:  student?.name,
+        }
      });
 
    }
