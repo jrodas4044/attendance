@@ -24,8 +24,4 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],
-  "strict": false, // Desactiva todas las comprobaciones estrictas
-  "noImplicitAny": false, // Permite el uso de `any`
-  "noImplicitThis": false, // Permite el uso implícito de `this`
-  "suppressImplicitAnyIndexErrors": true // Suprime errores de índice
 }
