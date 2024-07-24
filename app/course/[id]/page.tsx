@@ -108,7 +108,7 @@ const CourseDetail = () => {
           <div>
             <h2 className='text-lg font-bold'>Asistencias</h2>
             {attendances.length > 0 ? (
-              attendances.map((attendance) => (
+              attendances.map((attendance: any) => (
                 <div
                   className='flex items-center justify-between bg-white shadow rounded-2xl border p-4 my-4'
                   key={attendance.id}
