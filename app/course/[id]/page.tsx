@@ -81,6 +81,7 @@ const CourseDetail = () => {
               );
 
               if (studentAttendance) {
+                // @ts-ignore
                 setMarked(studentAttendance.isPresent);
               }
             });
