@@ -13,7 +13,7 @@ import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
 import useSession from './useSession';
 import {uuid} from "uuidv4";
 import {get} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
-import {fetchUserAttributes} from 'aws-amplify/auth';
+import {fetchUserAttributes, getCurrentUser} from 'aws-amplify/auth';
 
 
 Amplify.configure(outputs);
@@ -34,6 +34,28 @@ interface UserAttributes {
 
  export default function Recognition() {
    const { session, loading, error } = useSession();
+
+   const [user, setUser] = useState<any>(null);
+   const [student, setStudent] = useState(null);
+
+
+   useEffect(() => {
+     const fetchUser = async () => {
+       try {
+         const user = await getCurrentUser();
+         setUser(user);
+
+         // Obtener el estudiante asociado con el usuario actual
+         const { data: students } = await client.models.Student.list();
+         const student = students.find((student) => student.cognitoId === user.userId);
+         setStudent(student);
+       } catch (error) {
+         console.error("Error fetching user:", error);
+       }
+     };
+
+     fetchUser();
+   }, []);
 
 
    // state to store the user attributes
@@ -59,6 +81,7 @@ interface UserAttributes {
      const { body } = await restOperation.response;
      const json = await body.json();
       console.log(json);
+
    }
 
    // @ts-ignore
@@ -88,13 +111,7 @@ interface UserAttributes {
 
             <div>
               <div className={"ml-4"}>
-                <strong>Nombre:</strong> Jonhathan Rolando Rodas
-              </div>
-              <div className={"ml-4"}>
-                <strong>Curso:</strong> Casuistica Policial
-              </div>
-              <div className={"ml-4"}>
-                <strong>Nombre:</strong> Jonhathan Rolando Rodas
+                <strong>Usuario:</strong> { student?.name }
               </div>
               <div className={"ml-4"}>
                 <strong>Fecha:</strong> { new Date().toLocaleDateString() }

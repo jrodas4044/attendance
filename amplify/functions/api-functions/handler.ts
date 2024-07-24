@@ -9,7 +9,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   const input = { // CreateFaceLivenessSessionRequest
     Settings: { // CreateFaceLivenessSessionRequestSettings
       OutputConfig: { // LivenessOutputConfig
-        S3Bucket: "face-gimmick-session", // required
+        S3Bucket: "sessions-faces-udeo", // required
       },
       AuditImagesLimit: Number("int"),
     },
