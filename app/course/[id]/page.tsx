@@ -19,11 +19,11 @@ const CourseDetail = () => {
   const id = params.id || null;
   const [user, setUser] = useState<any>(null);
   const [marked, setMarked] = useState(false); // El usuario actual marcó la asistencia
-  const [course, setCourse] = useState(null);
-  const [attendances, setAttendances] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState<any>((null);
+  const [attendances, setAttendances] = useState<any>(([]);
+  const [loading, setLoading] = useState<any>((true);
   // cargar estudiante asociado con el cognito user
-  const [student, setStudent] = useState(null);
+  const [student, setStudent] =  useState<any>(null);
 
   // Obtener el usuario actual
   useEffect(() => {
