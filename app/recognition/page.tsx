@@ -12,7 +12,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
 import useSession from './useSession';
 import {uuid} from "uuidv4";
-import {post} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
+import {get, post} from "aws-amplify/api"; // Asegúrate de que la ruta de importación sea correcta
 import {fetchUserAttributes, getCurrentUser} from 'aws-amplify/auth';
 
 

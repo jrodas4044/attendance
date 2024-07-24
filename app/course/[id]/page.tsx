@@ -50,9 +50,8 @@ const CourseDetail = () => {
       try {
         if (id) {
 
-          const { data: course } = await client.models.Course.get({
-            id : id
-          });
+          // @ts-ignore
+          const { data: course } = await client.models.Course.get({id});
           setCourse(course);
 
           if (course) {
