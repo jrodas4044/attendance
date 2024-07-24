@@ -52,7 +52,9 @@ export default function Recognition() {
   }, []);
 
   const saveStudentAttendance = async () => {
+      const attendance = await client.models.StudentAttendance.create({
 
+      })
   }
 
 
@@ -91,6 +93,7 @@ export default function Recognition() {
 
       const { body: bodyCompare} = await restFaceCompare.response;
       const jsonFaceCompare = await bodyCompare.json()
+      // @ts-ignore
       const confidence = jsonFaceCompare.response.FaceMatches[0].Similarity;
       if (confidence < 90) {
         alert('El rostro no coincide');
@@ -126,6 +129,7 @@ export default function Recognition() {
             <FaceLivenessDetector
               sessionId={session?.SessionId ? session.SessionId : uuid()}
               region="us-east-1"
+              // @ts-ignore
               onAnalysisComplete={handleAnalysisComplete}
               onError={(error) => {
                 console.error(error);
