@@ -2,9 +2,10 @@ import type {APIGatewayProxyHandlerV2} from 'aws-lambda';
 import { RekognitionClient, CompareFacesCommand, CompareFacesCommandInput } from "@aws-sdk/client-rekognition"; // ES Modules import
 
 export const handler: APIGatewayProxyHandlerV2 = async (event) => {
-  // get SessionId from path parameter
-  const { sessionId } = event.pathParameters ?? {};
 
+  // Obtener datos enviados por metodo POST
+  const { body } = event;
+  const data = JSON.parse(body);
 
 
 
@@ -15,13 +16,13 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       SourceImage: {
         S3Object: {
           Bucket: "face-gimmick-session",
-          Name: "LCPJI/Jonhathan Rolando Rodas López.jpg",
+          Name: `LCPJI/${data?.targetImage}.jpg`,
         },
       },
       TargetImage: {
         S3Object: {
           Bucket: "face-gimmick-session",
-          Name: "a505e83f-8b8b-41d9-b823-004f48927b6c/reference.jpg",
+          Name: data?.referenceImage,
         },
       },
     };
