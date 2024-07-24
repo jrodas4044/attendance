@@ -36,7 +36,7 @@ interface UserAttributes {
    const { session, loading, error } = useSession();
 
    const [user, setUser] = useState<any>(null);
-   const [student, setStudent] = useState(null);
+   const [student, setStudent] = useState<any>(null);
 
 
    useEffect(() => {
@@ -83,7 +83,8 @@ interface UserAttributes {
      const json = await body.json();
       console.log(json);
 
-      const { sessionId, response } = json;
+     // @ts-ignore
+     const { sessionId, response } = json;
       const referenceImage = response.ReferenceImage.S3Object.Name;
 
       console.log(referenceImage);
@@ -91,10 +92,12 @@ interface UserAttributes {
       // call compareFaces API
       // llamar al api rest para comparar las caras
 
+     // @ts-ignore
      const restFaceCompare = post({
         apiName: "myHttpApi",
         path: `compareFaces/${ sessionId }`,
-        body: {
+       // @ts-ignore
+       body: {
           referenceImage,
           targetImage:  student?.name,
         }
