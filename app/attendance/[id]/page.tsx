@@ -48,6 +48,7 @@ interface UserAttributes {
          // Obtener el estudiante asociado con el usuario actual
          const { data: students } = await client.models.Student.list();
          const student = students.find((student) => student.cognitoId === user.userId);
+         // @ts-ignore
          setStudent(student);
        } catch (error) {
          console.error("Error fetching user:", error);
