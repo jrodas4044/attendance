@@ -137,11 +137,15 @@ const CourseDetail = () => {
                   </div>
 
                   <div>
-                    <Link href={`/attendance/${attendance.id}`}
-                      className={'bg-blue-500 text-white p-4 rounded-2xl'}
-                    >
-                      Marcar asistencia
-                    </Link>
+                    {attendance.available && !marked ? (
+                      <Link href={`/attendance/${attendance.id}`}
+                            className={'bg-blue-500 text-white p-4 rounded-2xl'}
+                      >
+                        Marcar asistencia
+                      </Link>
+                    ) : (
+                      <p className='text-red-500'>No puedes marcar asistencia</p>
+                    )}
                   </div>
                 </div>
               ))

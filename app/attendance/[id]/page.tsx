@@ -1,4 +1,5 @@
 "use client";
+import { useParams } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
@@ -30,6 +31,8 @@ interface UserAttributes {
 }
 
 export default function Recognition() {
+  const params = useParams();
+  const attendanceControlId = params.id;
   const { session, loading, error } = useSession();
   const [user, setUser] = useState<any>(null);
   const [student, setStudent] = useState<any>(null);
@@ -52,9 +55,19 @@ export default function Recognition() {
   }, []);
 
   const saveStudentAttendance = async () => {
-      const attendance = await client.models.StudentAttendance.create({
+    const input  = {
+      studentId: student.id,
+      attendanceControlId,
+      date: new Date(),
+      isPresent: true
+    }
 
-      })
+    // @ts-ignore
+    const  { errors, data: newStudentAttendance } = await  client.models.StudentAttendance.create(input)
+
+    if (newStudentAttendance) {
+      window.location.href='/'
+    }
   }
 
 
@@ -94,13 +107,22 @@ export default function Recognition() {
       const { body: bodyCompare} = await restFaceCompare.response;
       const jsonFaceCompare = await bodyCompare.json()
       // @ts-ignore
-      const confidence = jsonFaceCompare.response.FaceMatches[0].Similarity;
+      let confidence = null
+      try {
+        // @ts-ignore
+        confidence = jsonFaceCompare.response.FaceMatches[0].Similarity;
+      }catch (e) {
+        confidence = null
+        location.reload();
+      }
+
       if (confidence < 90) {
         alert('El rostro no coincide');
         return false
       }
 
       if (confidence >= 90) {
+        console.log('Guardando control')
         await saveStudentAttendance()
       }
     } catch (error) {
