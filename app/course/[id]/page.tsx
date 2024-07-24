@@ -9,6 +9,7 @@ import { Amplify } from 'aws-amplify';
 import outputs from '@/amplify_outputs.json';
 import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
+import Link from 'next/link';
 
 Amplify.configure(outputs);
 
@@ -131,6 +132,15 @@ const CourseDetail = () => {
                     ) : (
                       <span className='text-red-500'>No</span>
                     )}
+
+                  </div>
+
+                  <div>
+                    <Link href={`/attendance/${attendance.id}`}
+                      className={'bg-blue-500 text-white p-4 rounded-2xl'}
+                    >
+                      Marcar asistencia
+                    </Link>
                   </div>
                 </div>
               ))
