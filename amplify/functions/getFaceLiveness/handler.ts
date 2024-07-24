@@ -21,7 +21,6 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       "Access-Control-Allow-Headers": "*", // Specify only the headers you need to allow
     },
     body: JSON.stringify({
-      message: 'Hello World' ,
       sessionId,
       response,
     }),

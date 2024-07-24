@@ -164,6 +164,19 @@ httpApi.addRoutes({
   authorizer: iamAuthorizer,
 });
 
+// Add compareFaces function to the API
+const compareFacesIntegration = new HttpLambdaIntegration(
+  "CompareFacesIntegration",
+  backend.compareFaces.resources.lambda
+);
+
+httpApi.addRoutes({
+  path: "/session/compare",
+  methods: [HttpMethod.POST],
+  integration: compareFacesIntegration,
+  authorizer: iamAuthorizer,
+});
+
 const apiPolicy = new Policy(apiStack, "ApiPolicy", {
   statements: [
     new PolicyStatement({

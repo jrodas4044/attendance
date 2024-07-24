@@ -5,6 +5,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   // get SessionId from path parameter
   const { sessionId } = event.pathParameters ?? {};
 
+
+
+
   const client = new RekognitionClient({});
 
   try {

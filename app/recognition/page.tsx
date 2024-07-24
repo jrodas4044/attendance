@@ -82,6 +82,19 @@ interface UserAttributes {
      const json = await body.json();
       console.log(json);
 
+      const { sessionId, response } = json;
+      const referenceImage = response.ReferenceImage.S3Object.Name;
+
+      console.log(referenceImage);
+
+      // call compareFaces API
+      // llamar al api rest para comparar las caras
+
+     const restOperation2 = get({
+        apiName: "myHttpApi",
+        path: `compareFaces/${ sessionId }`,
+     });
+
    }
 
    // @ts-ignore
