@@ -30,8 +30,6 @@ export default function App() {
       <div className='flex items-center justify-center'>
         <h2 className='text-xl'>Usuario: {user?.signInDetails.loginId }</h2>
       </div>
-      Link to <a href="/recognition">Reconocimiento</a>
-
       <div>
         <ListCourses />
       </div>
