@@ -59,16 +59,6 @@ interface UserAttributes {
    }, []);
 
 
-   // state to store the user attributes
-    const [userAttributes, setUserAttributes] = useState<UserAttributes | null>(null);
-    useEffect(() => {
-      // fetch the user attributes when the component mounts
-      fetchUserAttributes().then((attributes ) => {
-        // @ts-ignore
-        setUserAttributes(attributes);
-        console.log(attributes);
-      });
-    }, []);
 
    const handleAnalysisComplete = async () => {
     const { SessionId } = session!;
@@ -95,7 +85,7 @@ interface UserAttributes {
      // @ts-ignore
      const restFaceCompare = post({
         apiName: "myHttpApi",
-        path: `compareFaces/${ sessionId }`,
+        path: `session/compare`,
         options: {
           body: {
             referenceImage,
@@ -103,6 +93,9 @@ interface UserAttributes {
           }
         }
      });
+
+     const jsonFaceCompare = await restFaceCompare.response;
+     console.log(jsonFaceCompare)
 
    }
 
@@ -119,18 +112,6 @@ interface UserAttributes {
           <h1 className={"text-3xl font-bold  text-gray-800 text-center"}>Marcar Asistencia</h1>
 
           <div className={"flex items-center justify-center my-6"}>
-
-
-            {userAttributes?.picture ? (
-              <img
-                src={userAttributes.picture}
-                alt="User"
-                width="100"
-                height="100"
-                className={"rounded-full border-4 border-white w-24 h-24 overflow-hidden"}
-              />
-            ) : null}
-
             <div>
               <div className={"ml-4"}>
                 <strong>Usuario:</strong> { student?.name }

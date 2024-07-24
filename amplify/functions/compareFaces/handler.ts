@@ -37,18 +37,19 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     const input: CompareFacesCommandInput = {
       SourceImage: {
         S3Object: {
-          Bucket: "face-gimmick-session",
+          Bucket: "sessions-faces-udeo",
           Name: `LCPJI/${data.targetImage}.jpg`, // Ajuste para evitar undefined
         },
       },
       TargetImage: {
         S3Object: {
-          Bucket: "face-gimmick-session",
+          Bucket: "sessions-faces-udeo",
           Name: data.referenceImage, // Ajuste para evitar undefined
         },
       },
     };
 
+    console.log('Input:', input); // Log the input for debugging
     // Ejecutar el comando
     const command = new CompareFacesCommand(input);
     const response = await client.send(command);
