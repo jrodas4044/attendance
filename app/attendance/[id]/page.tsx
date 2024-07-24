@@ -96,10 +96,11 @@ interface UserAttributes {
      const restFaceCompare = post({
         apiName: "myHttpApi",
         path: `compareFaces/${ sessionId }`,
-       // @ts-ignore
-       body: {
-          referenceImage,
-          targetImage:  student?.name,
+        options: {
+          body: {
+            referenceImage,
+            targetImage:  student?.name,
+          }
         }
      });
 
