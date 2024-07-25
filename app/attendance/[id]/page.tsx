@@ -47,6 +47,7 @@ export default function Recognition() {
         const student = students.find((student) => student.cognitoId === user.userId);
         // @ts-ignore
         setStudent(student);
+        console.log(student)
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -61,7 +62,6 @@ export default function Recognition() {
       date: new Date(),
       isPresent: true
     }
-
     // @ts-ignore
     const  { errors, data: newStudentAttendance } = await  client.models.StudentAttendance.create(input)
 
@@ -69,8 +69,6 @@ export default function Recognition() {
       window.location.href='/'
     }
   }
-
-
 
   const handleAnalysisComplete = async () => {
     const { SessionId } = session!;
@@ -140,7 +138,8 @@ export default function Recognition() {
           <div className={"flex items-center justify-center my-6"}>
             <div>
               <div className={"ml-4"}>
-                <strong>Usuario:</strong> {student?.name}
+                <strong>Usuario:</strong> {student?.name} <br/>
+                { student?.id }
               </div>
               <div className={"ml-4"}>
                 <strong>Fecha:</strong> {new Date().toLocaleDateString()}
