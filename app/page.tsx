@@ -46,7 +46,6 @@ export default function App() {
     }
   }, [user]);
 
-
   return (
     <main>
       <div className='flex space-x-4 items-center justify-center'>
@@ -58,7 +57,7 @@ export default function App() {
           {user?.signInDetails.loginId}
         </h2>
       </div>
-      <div>
+      <div className='my-6'>
         <ListCourses  student={student} />
       </div>
     </main>

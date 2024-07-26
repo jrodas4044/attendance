@@ -146,17 +146,8 @@ export default function Recognition() {
         <Loader />
       ) : (
         <>
-          <h1 className={"text-3xl font-bold text-gray-800 text-center"}>Marcar Asistencia</h1>
-          <div className={"flex items-center justify-center my-6"}>
-            <div>
-              <div className={"ml-4"}>
-                <strong>Usuario:</strong> {student?.name} <br/>
-                { student?.id }
-              </div>
-              <div className={"ml-4"}>
-                <strong>Fecha:</strong> {new Date().toLocaleDateString()}
-              </div>
-            </div>
+          <div className='mb-6'>
+            <h1 className={"text-xl font-bold text-gray-800 text-center"}>Marcar Asistencia</h1>
           </div>
           <div className={"container"}>
             <FaceLivenessDetector
