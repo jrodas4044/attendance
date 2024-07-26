@@ -50,10 +50,10 @@ const schema = a.schema({
       }).authorization((allow) => [allow.publicApiKey()]),
 
     Student: a.model({
-      cognitoId: a.string(),
+      email: a.string(),
       name: a.string().required(),
       carne: a.string(),
-      email: a.string(),
+      cognitoId: a.string(),
       pictureName: a.string(),
       courses: a.hasMany('CourseStudent', 'studentId'),
       StudentAttendances: a.hasMany('StudentAttendance', "studentId"),

@@ -12,11 +12,9 @@ import { translations } from '@aws-amplify/ui-react';
 import Link from 'next/link'
 
 I18n.putVocabularies(translations);
-I18n.setLanguage('es');
-
+I18n.setLanguage('es');s
 
 Amplify.configure(outputs);
-
 
 import { signOut } from 'aws-amplify/auth';
 
@@ -72,40 +70,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
-
-function obtenerUbicacion(): void {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(mostrarPosicion, mostrarError);
-  } else {
-    (document.getElementById("ubicacion") as HTMLElement).innerHTML = "La geolocalización no es soportada por este navegador.";
-  }
-}
-
-function mostrarPosicion(posicion: GeolocationPosition): void {
-  const lat: number = posicion.coords.latitude;
-  const lon: number = posicion.coords.longitude;
-  (document.getElementById("ubicacion") as HTMLElement).innerHTML = `Latitud: ${lat}<br>Longitud: ${lon}`;
-}
-
-function mostrarError(error: GeolocationPositionError): void {
-  let mensaje: string;
-  switch(error.code) {
-    case error.PERMISSION_DENIED:
-      mensaje = "El usuario denegó la solicitud de geolocalización.";
-      break;
-    case error.POSITION_UNAVAILABLE:
-      mensaje = "La información de la ubicación no está disponible.";
-      break;
-    case error.TIMEOUT:
-      mensaje = "La solicitud de ubicación ha caducado.";
-      break;
-    case error.UNKNOWN_ERROR:
-      mensaje = "Ha ocurrido un error desconocido.";
-      break;
-    default:
-      mensaje = "Ha ocurrido un error.";
-      break;
-  }
-  (document.getElementById("ubicacion") as HTMLElement).innerHTML = mensaje;
 }
