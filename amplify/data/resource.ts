@@ -49,10 +49,17 @@ const schema = a.schema({
       email: a.string(),
       pictureName: a.string(),
       courseId: a.id(),
-      courses: a.belongsTo('Course', 'courseId'),
+      courses: a.hasMany('Course', 'studentId'),
       StudentAttendances: a.hasMany('StudentAttendance', "studentId"),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+    CourseStudent: a.model({
+      courseId: a.id(),
+      course: a.belongsTo('Course', 'courseId'),
+      studentId: a.id(),
+      student: a.belongsTo('Student', 'studentId'),
+    }).authorization((allow) => [allow.publicApiKey()]),
 
     StudentAttendance: a.model({
       studentId: a.id(),

@@ -1,4 +1,4 @@
-// List courses component
+// List course component
 import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
@@ -21,7 +21,7 @@ export default function ListCourses() {
         const { data: courses } = await client.models.Course.list();
         setCourses(courses);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error("Error fetching course:", error);
       } finally {
         setLoading(false);
       }

@@ -27,13 +27,18 @@ export default function App() {
 
   return (
     <main>
-      <div className='flex items-center justify-center'>
-        <h2 className='text-xl'>Usuario: {user?.signInDetails.loginId }</h2>
+      <div className='flex space-x-4 items-center justify-center'>
+        <div className='w-24 h-24 bg-white rounded-full shadow border-4 overflow-hidden'>
+          <img src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${user?.userId}.jpg`} alt="Usuarios"/>
+        </div>
+        <h2 className='text-sm'>
+          <strong>Usuario: </strong>
+          {user?.signInDetails.loginId}
+        </h2>
       </div>
       <div>
         <ListCourses />
       </div>
-
     </main>
   );
 }
