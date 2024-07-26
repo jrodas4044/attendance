@@ -30,6 +30,7 @@ export default function App() {
     const fetchStudent = async () => {
       try {
         const { data: student } = await client.models.Student.get({
+          // @ts-ignore
           id: user?.userId
         });
         setStudent(student);
