@@ -50,7 +50,7 @@ const schema = a.schema({
       }).authorization((allow) => [allow.publicApiKey()]),
 
     Student: a.model({
-      email: a.string(),
+      email: a.string().required(),
       name: a.string().required(),
       carne: a.string(),
       cognitoId: a.string(),
@@ -58,6 +58,7 @@ const schema = a.schema({
       courses: a.hasMany('CourseStudent', 'studentId'),
       StudentAttendances: a.hasMany('StudentAttendance', "studentId"),
     })
+      .identifier(['email'])
     .authorization((allow) => [allow.publicApiKey()]),
 
     StudentAttendance: a.model({
@@ -69,6 +70,16 @@ const schema = a.schema({
       isPresent: a.boolean().default(false),
     }).authorization((allow) => [allow.publicApiKey()]),
 
+    StudentByCognitoIDResponse: a.customType({
+      id: a.string(),
+      name: a.string(),
+      email: a.string(),
+    }),
+
+  getStudentByCognitoID: a
+    .query()
+    .arguments({ cognitoId: a.string().required() })
+    .returns(a.ref('StudentByCognitoIDResponse'))
 });
 
 export type Schema = ClientSchema<typeof schema>;

@@ -17,12 +17,33 @@ const client = generateClient<Schema>();
 export default function App() {
 
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [student, setStudent] = useState<any>(null);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       setUser(user);
     });
   }, []);
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const { data: student } = await client.models.Student.get({
+          id: user?.userId
+        });
+        setStudent(student);
+      } catch (error) {
+        console.error("Error fetching student:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchStudent();
+    }
+  }, [user]);
 
 
   return (
@@ -37,7 +58,7 @@ export default function App() {
         </h2>
       </div>
       <div>
-        <ListCourses />
+        <ListCourses  user={user} />
       </div>
     </main>
   );

@@ -1,9 +1,9 @@
 // List course component
-import { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+import {useState, useEffect} from "react";
+import {generateClient} from "aws-amplify/data";
+import type {Schema} from "@/amplify/data/resource";
 import "./../app/app.css";
-import { Amplify } from "aws-amplify";
+import {Amplify} from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 
@@ -11,15 +11,18 @@ Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
-export default function ListCourses() {
-  const [courses, setCourses] = useState<any>(null);
+interface ListCoursesProps {
+  user?: any
+}
+
+export default function ListCourses({user}: ListCoursesProps) {
+  const [courses, setCourses] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const { data: courses } = await client.models.Course.list();
-        setCourses(courses);
+        //setCourses(courses);
       } catch (error) {
         console.error("Error fetching course:", error);
       } finally {

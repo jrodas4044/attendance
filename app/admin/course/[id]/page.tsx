@@ -8,6 +8,7 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { useParams } from 'next/navigation';
 import {div} from "@tensorflow/tfjs-core";
+import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
@@ -18,6 +19,7 @@ type Course = {
 }
 
 type Student = {
+  id: String,
   name: String,
   email: String | null
 }
@@ -50,9 +52,19 @@ const AdminCoursePage = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       // @ts-ignore
-      const { data: students } = await course.students();
+      const { data , error } = await course.students();
+      if (error) {
+        console.error("Error fetching students:", error);
+      }
+
+      const studentPromises = data.map( async (student: any) => {
+        const { data: studentData } =  await student.student();
+        return studentData
+      });
+
+      const resolvedStudents = await Promise.all(studentPromises);
+      setStudents(resolvedStudents)
       setLoading(false);
-      setStudents(students)
     }
 
     if(course !== null) {
@@ -60,13 +72,16 @@ const AdminCoursePage = () => {
     }
   }, [course]);
 
+  // @ts-ignore
   return (
     <>
       {loading ? (
         <p>Cargado...</p>
       ) : (
         <div>
-          <h2>{course?.name}</h2>
+          <div className='bg-white shadow border rounded'>
+            <CourseUpdateForm course={course} />
+          </div>
           <table className='table w-full my-4'>
             <thead className='bg-gray-400'>
               <tr>
@@ -87,8 +102,8 @@ const AdminCoursePage = () => {
                  </td>
                </tr>
               ) : (
-                students.map((student) => (
-                  <tr>
+                students.map((student:Student, index: number) => (
+                  <tr key={index}>
                     <td className='border border-gray-400 text-sm px-4 py-2'>{student.name}</td>
                     <td className='border border-gray-400 text-sm px-4 py-2'>{student.email}</td>
                   </tr>
