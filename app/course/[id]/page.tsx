@@ -23,8 +23,6 @@ const CourseDetail = () => {
   const [course, setCourse] = useState<any>(null);
   const [attendances, setAttendances] = useState<any>([]);
   const [loading, setLoading] = useState<any>(true);
-  // cargar estudiante asociado con el cognito user
-  const [student, setStudent] =  useState<any>(null);
 
   // Obtener el usuario actual
   useEffect(() => {
@@ -32,18 +30,14 @@ const CourseDetail = () => {
       try {
         const user = await getCurrentUser();
         setUser(user);
-
-        // Obtener el estudiante asociado con el usuario actual
-        const { data: students } = await client.models.Student.list();
-        const student = students.find((student) => student.cognitoId === user.userId);
-        setStudent(student);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
-    fetchUser();
-  }, []);
+      fetchUser();
+
+    }, []);
 
   // Obtener el curso y las asistencias
   useEffect(() => {
@@ -57,6 +51,11 @@ const CourseDetail = () => {
 
           if (course) {
             const { data: attendances } = await course.attendanceControls();
+            // order by date
+            attendances.sort((a: any, b: any) => {
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+            });
+
             setAttendances(attendances);
 
             // Obtener asistencias de estudiantes de manera asíncrona
@@ -76,7 +75,7 @@ const CourseDetail = () => {
             studentAttendances.forEach((attendance) => {
               const studentAttendance = attendance.find(
                 (item) => {
-                    return item.studentId === student?.id;
+                    return item.studentId === user.signInDetails.loginId;
                 }
               );
 
@@ -95,8 +94,10 @@ const CourseDetail = () => {
       }
     };
 
-    fetchCourse();
-  }, [user,student,id]);
+    if (user !== null) {
+      fetchCourse();
+    }
+  }, [user,id]);
 
   if (loading) return <p>Cargando...</p>;
 
@@ -130,18 +131,18 @@ const CourseDetail = () => {
                     <strong className={'mr-2'}>Marcado:</strong>
                     {marked ? (
                       <span className='text-green-500'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6">
-                          <path stroke-linecap="round" stroke-linejoin="round"
+                          <path
                                 d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
                         </svg>
 
                       </span>
                     ) : (
                       <span className='text-red-500'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6">
-                          <path stroke-linecap="round" stroke-linejoin="round"
+                          <path
                                 d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
 
@@ -155,9 +156,9 @@ const CourseDetail = () => {
                       <Link href={`/attendance/${attendance.id}`}
                             className={'cursor-pointer bg-blue-400 shadow rounded-full p-2 hover:bg-blue-600'}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6 text-white">
-                          <path stroke-linecap="round" stroke-linejoin="round"
+                          <path
                                 d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
                         </svg>
                       </Link>

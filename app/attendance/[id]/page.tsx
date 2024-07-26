@@ -43,11 +43,6 @@ export default function Recognition() {
       try {
         const user = await getCurrentUser();
         setUser(user);
-        const { data: students } = await client.models.Student.list();
-        const student = students.find((student) => student.cognitoId === user.userId);
-        // @ts-ignore
-        setStudent(student);
-        console.log(student)
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -55,9 +50,26 @@ export default function Recognition() {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const { data: student } = await client.models.Student.get({
+          email: user.signInDetails.loginId
+        });
+        setStudent(student);
+      } catch (error) {
+        console.error("Error fetching student:", error);
+      }
+    };
+
+    if (user !== null) {
+      fetchStudent();
+    }
+  }, [user]);
+
   const saveStudentAttendance = async () => {
     const input  = {
-      studentId: student.id,
+      studentId: user.signInDetails.loginId,
       attendanceControlId,
       date: new Date(),
       isPresent: true

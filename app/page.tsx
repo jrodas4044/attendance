@@ -31,7 +31,7 @@ export default function App() {
       try {
         const { data: student } = await client.models.Student.get({
           // @ts-ignore
-          id: user?.userId
+          email: user.signInDetails.loginId
         });
         setStudent(student);
       } catch (error) {
@@ -59,7 +59,7 @@ export default function App() {
         </h2>
       </div>
       <div>
-        <ListCourses  user={user} />
+        <ListCourses  student={student} />
       </div>
     </main>
   );
