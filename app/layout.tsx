@@ -12,7 +12,7 @@ import { translations } from '@aws-amplify/ui-react';
 import Link from 'next/link'
 
 I18n.putVocabularies(translations);
-I18n.setLanguage('es');s
+I18n.setLanguage('es');
 
 Amplify.configure(outputs);
 
@@ -23,7 +23,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   async function handleSignOut() {
     await signOut()
   }
