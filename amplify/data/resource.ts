@@ -19,7 +19,14 @@ const schema = a.schema({
     courses: a.hasMany('Course', 'careerId' ),
   }).authorization((allow) => [allow.publicApiKey()]),
 
-   Course: a
+  CourseStudent: a.model({
+    courseId: a.id().required(),
+    studentId: a.id().required(),
+    course: a.belongsTo('Course', 'courseId'),
+    student: a.belongsTo('Student', 'studentId'),
+  }).authorization((allow) => [allow.publicApiKey()]),
+
+  Course: a
     .model({
       name: a.string().required(),
       days: a.enum(["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]),
@@ -28,7 +35,7 @@ const schema = a.schema({
       attendanceControls: a.hasMany('AttendanceControl', 'courseId' ),
       careerId: a.id(),
       career: a.belongsTo('Career', 'careerId'),
-      students: a.hasMany('Student', 'courseId'),
+      students: a.hasMany('CourseStudent', 'courseId'),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
@@ -48,18 +55,10 @@ const schema = a.schema({
       carne: a.string(),
       email: a.string(),
       pictureName: a.string(),
-      courseId: a.id(),
-      courses: a.hasMany('Course', 'studentId'),
+      courses: a.hasMany('CourseStudent', 'studentId'),
       StudentAttendances: a.hasMany('StudentAttendance', "studentId"),
     })
     .authorization((allow) => [allow.publicApiKey()]),
-
-    CourseStudent: a.model({
-      courseId: a.id(),
-      course: a.belongsTo('Course', 'courseId'),
-      studentId: a.id(),
-      student: a.belongsTo('Student', 'studentId'),
-    }).authorization((allow) => [allow.publicApiKey()]),
 
     StudentAttendance: a.model({
       studentId: a.id(),
