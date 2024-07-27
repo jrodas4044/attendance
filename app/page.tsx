@@ -32,7 +32,10 @@ export default function App() {
         const { data: student } = await client.models.Student.get({
           // @ts-ignore
           email: user.signInDetails.loginId
+        }, {
+          selectionSet: ['name', 'email', 'courses.course.*']
         });
+        console.log(student);
         setStudent(student);
       } catch (error) {
         console.error("Error fetching student:", error);

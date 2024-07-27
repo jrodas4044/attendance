@@ -22,14 +22,11 @@ export default function ListCourses({student}: ListCoursesProps) {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const {data} = await student.courses();
 
-        const coursePromises = data.map(async (course: any) => {
-          const {data: courseData} = await course.course();
-          return courseData;
+        const courses  =  student.courses.map((course: any) => {
+          return course.course;
         });
 
-        const courses = await Promise.all(coursePromises);
         setCourses(courses);
       } catch (error) {
         console.error("Error fetching course:", error);

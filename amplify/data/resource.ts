@@ -82,6 +82,7 @@ const schema = a.schema({
     .returns(a.ref('StudentByCognitoIDResponse'))
 });
 
+
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
