@@ -4,7 +4,7 @@ import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/cli
 const client = new CognitoIdentityProviderClient({});
 
 export const handler = async (event: any) => {
-  const email = event.email;
+  const email = event.pathParameters?.userId;
 
   const command = new AdminGetUserCommand({
     UserPoolId: 'us-east-1_GztOL1eId',

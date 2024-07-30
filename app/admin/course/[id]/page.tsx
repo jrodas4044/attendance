@@ -9,8 +9,18 @@ import "@aws-amplify/ui-react/styles.css";
 import { useParams } from 'next/navigation';
 import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 // Buscar usuarios de cognito a través de la API de Amplify
-import { } from 'aws-amplify/auth/cognito';
+import { get } from 'aws-amplify/api';
+
 Amplify.configure(outputs);
+const existingConfig = Amplify.getConfig();
+Amplify.configure({
+  ...existingConfig,
+  API: {
+    ...existingConfig.API,
+    REST: outputs.custom.API,
+  },
+});
+
 const client = generateClient<Schema>();
 
 
@@ -60,6 +70,19 @@ const AdminCoursePage = () => {
      const students = course?.students?.map((student: any) => {
         return student.student
       });
+
+
+      const studentPromises = students.map(async (student: any) => {
+        const restOperation = await get({
+          apiName: "myHttpApi",
+          path: `/user/${student.email}`
+        });
+
+        const { body } = await restOperation.response;
+        const json = await body.json();
+        return json;
+      });
+
 
       setStudents(students)
       setLoading(false);
