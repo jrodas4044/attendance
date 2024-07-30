@@ -1,27 +1,18 @@
-import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { json } from 'stream/consumers';
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider"; // ES Modules import
+
+
+const client = new CognitoIdentityProviderClient({});
 
 export const handler = async (event: any) => {
   const email = event.email;
 
-  const cognito = new CognitoIdentityServiceProvider();
+  const command = new AdminGetUserCommand({
+    UserPoolId: 'us-east-1_GztOL1eId',
+    Username: email
+  });
 
   try {
-    const params = {
-      UserPoolId: 'us-east-1_GztOL1eId',
-      Filter: `email = "${email}"`,
-      Limit: 1
-    };
-
-    const response = await cognito.listUsers(params).promise();
-
-    if (response.Users && response.Users.length > 0) {
-      const user = response.Users[0];
-      // Hacer algo con el usuario encontrado
-      console.log('Usuario encontrado:', user);
-    } else {
-      console.log('Usuario no encontrado');
-    }
+    const response = await client.send(command);
 
     return {
       statusCode: 200,
