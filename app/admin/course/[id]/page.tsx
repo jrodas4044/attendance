@@ -9,7 +9,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { useParams } from 'next/navigation';
 import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 // Buscar usuarios de cognito a través de la API de Amplify
-import { } from 'aws-amplify/auth';
+import { } from 'aws-amplify/auth/cognito';
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
 
@@ -39,6 +39,9 @@ const AdminCoursePage = () => {
         const { data: course } = await client.models.Course.get({
           // @ts-ignore
           id: courseId
+        }, {
+          // @ts-ignore
+          selectionSet: ["id", "name", "scheduleStart", "scheduleEnd", "students.student.*"]
         });
         // @ts-ignore
         setCourse(course);
@@ -53,18 +56,12 @@ const AdminCoursePage = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       // @ts-ignore
-      const { data , error } = await course.students();
-      if (error) {
-        console.error("Error fetching students:", error);
-      }
 
-      const studentPromises = data.map( async (student: any) => {
-        const { data: studentData } =  await student.student();
-        return studentData
+     const students = course?.students?.map((student: any) => {
+        return student.student
       });
 
-      const resolvedStudents = await Promise.all(studentPromises);
-      setStudents(resolvedStudents)
+      setStudents(students)
       setLoading(false);
     }
 

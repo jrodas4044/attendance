@@ -46,7 +46,11 @@ const CourseDetail = () => {
         if (id) {
 
           // @ts-ignore
-          const { data: course } = await client.models.Course.get({id});
+          const { data: course } = await client.models.Course.get({id}, {
+            query: {
+              id,
+            },
+          });
           setCourse(course);
 
           if (course) {

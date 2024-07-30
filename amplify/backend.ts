@@ -4,6 +4,7 @@ import { data } from './data/resource.js';
 import { myApiFunction } from "./functions/api-functions/resource";
 import { getFaceLiveness } from "./functions/getFaceLiveness/resource";
 import { compareFaces } from "./functions/compareFaces/resource";
+import {getUserPool} from "./functions/getUserPool/resource";
 import { Stack } from "aws-cdk-lib";
 import {
   CorsHttpMethod,
@@ -24,6 +25,7 @@ const backend = defineBackend({
   myApiFunction,
   getFaceLiveness,
   compareFaces,
+  getUserPool,
 });
 
 backend.getFaceLiveness.resources.lambda.addToRolePolicy(
@@ -103,6 +105,14 @@ backend.getFaceLiveness.resources.lambda.addToRolePolicy(
     resources: ["*"],
   })
 );
+
+/// agregar funcion de getUserPool
+backend.getUserPool.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["cognito-idp:AdminGetUser"],
+    resources: ["*"],
+  })
+);
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
 
@@ -174,6 +184,19 @@ httpApi.addRoutes({
   path: "/session/compare",
   methods: [HttpMethod.POST],
   integration: compareFacesIntegration,
+  authorizer: iamAuthorizer,
+});
+
+// Add getUserPool function to the API
+const getUserPoolIntegration = new HttpLambdaIntegration(
+  "getUserPoolIntegration",
+  backend.getUserPool.resources.lambda
+);
+
+httpApi.addRoutes({
+  path: "/user/{userId}",
+  methods: [HttpMethod.GET],
+  integration: getUserPoolIntegration,
   authorizer: iamAuthorizer,
 });
 
