@@ -55,6 +55,7 @@ export default function ListCourses({student}: ListCoursesProps) {
             </div>
             <div className='text-center'>
               <strong>Horario</strong>
+              <p>{course.days}</p>
               <p>{course.scheduleStart}</p>
               <p>{course.scheduleEnd}</p>
             </div>

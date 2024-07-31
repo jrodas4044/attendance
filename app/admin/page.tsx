@@ -38,17 +38,18 @@ const AdminPage = () => {
       ) : (
         courses.map((course) => (
           <div key={course.id}
-            className='flex items-center justify-between text-xs border bg-white shadow rounded-2xl border-gray-200 p-4 my-4'
+            className='grid grid-cols-3 text-xs border bg-white shadow rounded-2xl border-gray-200 p-4 my-4'
           >
             <div>
               <h3 className='font-bold'>{course.name}</h3>
             </div>
             <div>
+              <p>{course.days}</p>
               <p>{course.scheduleStart}</p>
               <p>{course.scheduleEnd}</p>
             </div>
 
-            <div>
+            <div className="flex items-center justify-end">
               <a href={`/admin/course/${course.id}`} className='bg-blue-500 text-white p-2 rounded-2xl'>
                 Ver
               </a>

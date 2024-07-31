@@ -35,7 +35,9 @@ export default function App() {
         }, {
           selectionSet: ['name', 'email', 'courses.course.*']
         });
-        console.log(student);
+
+        console.log('student: ',student, user.signInDetails.loginId);
+
         setStudent(student);
       } catch (error) {
         console.error("Error fetching student:", error);

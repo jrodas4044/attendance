@@ -25,14 +25,17 @@ const client = generateClient<Schema>();
 
 
 type Course = {
+  id: String,
   name: String,
+  attendanceControls: any[],
 }
 
 type Student = {
   id: String,
   name: String,
-  email: String | null
-  cognitoId: String | null
+  email: String | null,
+  cognitoId: String | null,
+  poolId: String | null
 }
 
 const AdminCoursePage = () => {
@@ -51,7 +54,7 @@ const AdminCoursePage = () => {
           id: courseId
         }, {
           // @ts-ignore
-          selectionSet: ["id", "name", "scheduleStart", "scheduleEnd", "students.student.*"]
+          selectionSet: ["id", "name", "scheduleStart", "scheduleEnd", "students.student.*", "attendanceControls.*"]
         });
         // @ts-ignore
         setCourse(course);
@@ -73,18 +76,31 @@ const AdminCoursePage = () => {
 
 
       const studentPromises = students.map(async (student: any) => {
-        const restOperation = await get({
-          apiName: "myHttpApi",
-          path: `/user/${student.email}`
-        });
+        try{
+          const restOperation = await get({
+            apiName: "myHttpApi",
+            path: `/user/${student.email}`
+          });
 
-        const { body } = await restOperation.response;
-        const json = await body.json();
-        return json;
+          const { body } = await restOperation.response;
+
+          const json = await body.json();
+          const stduent = {
+            ...student,
+            // @ts-ignore
+            poolId: json?.UserAttributes?.find((attr: any) => attr.Name === 'sub')?.Value
+          }
+          return stduent;
+        }catch (error) {
+          console.error('Error al buscar el usuario:', error);
+          return student;
+        }
       });
 
+      const studentsResolve = await Promise.all(studentPromises);
 
-      setStudents(students)
+
+      setStudents(studentsResolve)
       setLoading(false);
     }
 
@@ -106,6 +122,7 @@ const AdminCoursePage = () => {
           <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
             <thead className='bg-gray-400'>
               <tr>
+                <th>#</th>
                 <th>
                   Fotografía
                 </th>
@@ -128,9 +145,13 @@ const AdminCoursePage = () => {
               ) : (
                 students.map((student:Student, index: number) => (
                   <tr key={index}>
+                    <td className='border border-gray-400 text-sm px-4 py-2 text-center'>
+                      {index + 1}
+                    </td>
                     <td className='flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
                       <div className='w-12 h-12 bg-white rounded-full shadow border-4 overflow-hidden'>
-                        <img src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.cognitoId}.jpg`} alt="Usuarios"/>
+                        <img src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.poolId}.jpg`}
+                             alt="Usuarios"/>
                       </div>
                     </td>
                     <td className='border border-gray-400 text-sm px-4 py-2'>{student.name}</td>
@@ -140,6 +161,39 @@ const AdminCoursePage = () => {
             }
             </tbody>
           </table>
+
+          <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
+            <thead className='bg-gray-400'>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Disponible</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {course?.attendanceControls?.map((attendanceControl: any, index: number) => (
+                <tr key={index} >
+                  <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.date}</td>
+                  <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.time}</td>
+                  <td
+                    className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.available ? 'Si' : 'No'}</td>
+                  <td
+                    className='border border-gray-400 text-sm px-4 py-4 text-center'
+                  >
+                    <a
+                      className={`bg-blue-500 text-white px-4 py-2 rounded`}
+                      href={`/admin/attendanceControl/${attendanceControl?.id}`}
+                    >
+                      Ver
+                    </a>
+                  </td>
+
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )
       }
@@ -147,4 +201,4 @@ const AdminCoursePage = () => {
   )
 };
 
-export default  AdminCoursePage
+export default AdminCoursePage
