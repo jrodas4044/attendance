@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation';
 import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 // Buscar usuarios de cognito a través de la API de Amplify
 import { get } from 'aws-amplify/api';
+import Image from 'next/image'
 
 Amplify.configure(outputs);
 const existingConfig = Amplify.getConfig();
@@ -93,16 +94,18 @@ const AdminCoursePage = () => {
           }
           return stduent;
         }catch (error) {
-          console.error('Error al buscar el usuario:', error);
-          return student;
+          console.info("Error fetching student:", student.student);
+          return {
+            ...student.student,
+            poolId: null
+          };
         }
       });
 
       const studentsResolve = await Promise.all(studentPromises);
       // eliminar los estudiantes que no se pudieron resolver
-  
-
-      setStudents(studentsResolve)
+      const studentsFiltered = studentsResolve.filter((student: any) => student.poolId !== null);
+      setStudents(studentsFiltered)
       setLoading(false);
     }
 
@@ -166,8 +169,13 @@ const AdminCoursePage = () => {
                     </td>
                     <td className='flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
                       <div className='w-12 h-12 bg-white rounded-full shadow border-4 overflow-hidden'>
-                        <img src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.poolId}.jpg`}
-                             alt="Usuarios"/>
+                        <Image 
+                          src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.poolId}.jpg`}
+                          alt="Usuarios"
+                          width={200}
+                          height={200}
+                          quality={80}	
+                          />
                       </div>
                     </td>
                     <td className='border border-gray-400 text-sm px-4 py-2'>
