@@ -78,6 +78,7 @@ const AdminCoursePage = () => {
 
       const studentPromises = students.map(async (student: any) => {
         try{
+
         const restOperation = await get({
           apiName: "myHttpApi",
           path: `/user/${student.student.email}`
@@ -94,7 +95,7 @@ const AdminCoursePage = () => {
           }
           return stduent;
         }catch (error) {
-          console.info("Error fetching student:", student.student);
+          console.info("Error fetching student:", student.student, error);
           return {
             ...student.student,
             poolId: null
