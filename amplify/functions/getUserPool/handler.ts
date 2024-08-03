@@ -25,6 +25,10 @@ export const handler = async (event: any) => {
   } catch (error) {
     console.error('Error al buscar el usuario:', error);
     return {
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Restrict this to domains you trust
+        "Access-Control-Allow-Headers": "*", // Specify only the headers you need to allow
+      },  
       statusCode: 500,
       body: 'Error al buscar el usuario'
     };

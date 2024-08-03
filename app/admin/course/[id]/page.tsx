@@ -13,7 +13,9 @@ import { get } from 'aws-amplify/api';
 import Image from 'next/image'
 
 Amplify.configure(outputs);
+
 const existingConfig = Amplify.getConfig();
+
 Amplify.configure({
   ...existingConfig,
   API: {
@@ -106,7 +108,7 @@ const AdminCoursePage = () => {
       const studentsResolve = await Promise.all(studentPromises);
       // eliminar los estudiantes que no se pudieron resolver
       const studentsFiltered = studentsResolve.filter((student: any) => student.poolId !== null);
-      setStudents(studentsFiltered)
+      setStudents(studentsResolve)
       setLoading(false);
     }
 
@@ -168,7 +170,7 @@ const AdminCoursePage = () => {
                     <td className='border border-gray-400 text-sm px-4 py-2 text-center'>
                       {index + 1}
                     </td>
-                    <td className='flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
+                    <td className='hidden flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
                       <div className='w-12 h-12 bg-white rounded-full shadow border-4 overflow-hidden'>
                         <Image 
                           src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.poolId}.jpg`}
