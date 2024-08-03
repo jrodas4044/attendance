@@ -70,25 +70,26 @@ const AdminCoursePage = () => {
     const fetchStudents = async () => {
       // @ts-ignore
 
-     const students = course?.students?.map((student: any) => {
-        return student.student
+     const students = course?.students?.filter((student: any) => {
+        return student.student !== null;
       });
 
 
       const studentPromises = students.map(async (student: any) => {
         try{
-          const restOperation = await get({
-            apiName: "myHttpApi",
-            path: `/user/${student.email}`
-          });
+        const restOperation = await get({
+          apiName: "myHttpApi",
+          path: `/user/${student.student.email}`
+        });
+          
 
-          const { body } = await restOperation.response;
+         const { body } = await restOperation.response;
 
-          const json = await body.json();
-          const stduent = {
-            ...student,
+        const json = await body.json();
+         const stduent = {
+            ...student.student,
             // @ts-ignore
-            poolId: json?.UserAttributes?.find((attr: any) => attr.Name === 'sub')?.Value
+           poolId: json?.UserAttributes?.find((attr: any) => attr.Name === 'sub')?.Value
           }
           return stduent;
         }catch (error) {
@@ -98,7 +99,8 @@ const AdminCoursePage = () => {
       });
 
       const studentsResolve = await Promise.all(studentPromises);
-
+      // eliminar los estudiantes que no se pudieron resolver
+  
 
       setStudents(studentsResolve)
       setLoading(false);
@@ -108,6 +110,20 @@ const AdminCoursePage = () => {
       fetchStudents()
     }
   }, [course]);
+
+
+
+  const getUserImage =  async(email: string) => {
+    const restOperation = await get({
+      apiName: "myHttpApi",
+      // @ts-ignore
+      path: `/user/${student?.email}`
+    });
+
+    const { body } = await restOperation.response;
+
+    const json = await body.json();
+  }
 
   // @ts-ignore
   return (
@@ -154,8 +170,15 @@ const AdminCoursePage = () => {
                              alt="Usuarios"/>
                       </div>
                     </td>
-                    <td className='border border-gray-400 text-sm px-4 py-2'>{student.name}</td>
-                    <td className='border border-gray-400 text-sm px-4 py-2'>{student.email}</td>
+                    <td className='border border-gray-400 text-sm px-4 py-2'>
+                      <div className='font-bold'>
+                        {student?.name}
+                      </div>
+                      <div>
+                        {student?.poolId}
+                      </div>
+                    </td>
+                    <td className='border border-gray-400 text-sm px-4 py-2'>{student?.email}</td>
                   </tr>
                 )))
             }
