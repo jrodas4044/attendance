@@ -1,6 +1,6 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource.js';
-import { data } from './data/resource.js';
+import { data, getCognitoUserByEmailFunction } from './data/resource.js';
 import { myApiFunction } from "./functions/api-functions/resource";
 import { getFaceLiveness } from "./functions/getFaceLiveness/resource";
 import { compareFaces } from "./functions/compareFaces/resource";
@@ -22,11 +22,14 @@ import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 const backend = defineBackend({
   auth,
   data,
+  getCognitoUserByEmailFunction,
   myApiFunction,
   getFaceLiveness,
   compareFaces,
   getUserPool,
 });
+
+
 
 backend.getFaceLiveness.resources.lambda.addToRolePolicy(
   new PolicyStatement({
@@ -108,6 +111,13 @@ backend.getFaceLiveness.resources.lambda.addToRolePolicy(
 
 /// agregar funcion de getUserPool
 backend.getUserPool.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ["cognito-idp:AdminGetUser"],
+    resources: ["*"],
+  })
+);
+
+backend.getCognitoUserByEmailFunction.resources.lambda.addToRolePolicy(
   new PolicyStatement({
     actions: ["cognito-idp:AdminGetUser"],
     resources: ["*"],

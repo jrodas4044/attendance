@@ -7,7 +7,7 @@ adding a new "isDone" field as a boolean. The authorization rule below
 specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
-export const getCognitoUserByEmail = defineFunction({
+export const getCognitoUserByEmailFunction = defineFunction({
   entry: './getCognitoUserByEmail.ts',
 });
 
@@ -92,9 +92,7 @@ const schema = a.schema({
       .arguments({ email: a.string().required() })
       .returns(a.string())
       .authorization((allow) => [allow.publicApiKey()])
-      .handler(a.handler.function(getCognitoUserByEmail))
-    ,
-
+      .handler(a.handler.function(getCognitoUserByEmailFunction)),
 
     StudentByCognitoIDResponse: a.customType({
       id: a.string(),
