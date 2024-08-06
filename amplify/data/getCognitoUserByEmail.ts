@@ -17,5 +17,5 @@ export const handler: Schema['getCognitoUserByEmail']['functionHandler'] = async
 
   const response = await client.send(command);
 
-  return response;
+  return response.Username;
 };
