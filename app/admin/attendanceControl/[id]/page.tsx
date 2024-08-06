@@ -100,7 +100,7 @@ const AttendaceControlPage = () => {
             return a.student.name.localeCompare(b.student.name);
           });
        
-
+        // @ts-ignore
         setTotalAttended(attendedStudentsEmails.length)
         // @ts-ignore
         setTotalStudent(course.students.length)
