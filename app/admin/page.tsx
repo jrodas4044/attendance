@@ -30,9 +30,29 @@ const AdminPage = () => {
     fetchCourses();
   }, []);
 
+  const searchCourse = async (query:string) => {
+    try {
+      setLoading(true);
+      const { data: courses } = await client.models.Course.list({ filter: { name: { contains: query } } });
+      setCourses(courses);
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
-      <h1>Cursos</h1>
+      <h1 className='text-2xl mb mb-4'>Cursos</h1>
+      <div>
+        <input
+          type='text'
+          placeholder='Buscar curso'
+          onChange={(e) => searchCourse(e.target.value)}
+          className='w-full border border-gray-200 rounded-2xl p-2'
+        />
+      </div>
       {loading ? (
         <p>Cargado...</p>
       ) : (
@@ -40,7 +60,7 @@ const AdminPage = () => {
           <div key={course.id}
             className='grid grid-cols-3 text-xs border bg-white shadow rounded-2xl border-gray-200 p-4 my-4'
           >
-            <div>
+            <div className='flex items-center justify-start'>
               <h3 className='font-bold'>{course.name}</h3>
             </div>
             <div>

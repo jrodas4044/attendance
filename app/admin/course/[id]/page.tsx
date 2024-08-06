@@ -11,6 +11,7 @@ import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 // Buscar usuarios de cognito a través de la API de Amplify
 import { get } from 'aws-amplify/api';
 import Image from 'next/image'
+import { isEmail } from '@/utils/validator';
 
 Amplify.configure(outputs);
 
@@ -73,13 +74,13 @@ const AdminCoursePage = () => {
     const fetchStudents = async () => {
       // @ts-ignore
 
-     const students = course?.students?.filter((student: any) => {
-        return student.student !== null;
-      });
+    const students = course?.students?.filter((student: any, index: number, self: any[]) => {
+       return student.student !== null && isEmail(student.student.email) && self.findIndex((s) => s.student.email === student.student.email) === index;
+     });
 
+     console.log(students);
 
       const studentPromises = students.map(async (student: any) => {
-        try{
 
         const restOperation = await get({
           apiName: "myHttpApi",
@@ -96,13 +97,6 @@ const AdminCoursePage = () => {
            poolId: json?.UserAttributes?.find((attr: any) => attr.Name === 'sub')?.Value
           }
           return stduent;
-        }catch (error) {
-          console.info("Error fetching student:", student.student, error);
-          return {
-            ...student.student,
-            poolId: null
-          };
-        }
       });
 
       const studentsResolve = await Promise.all(studentPromises);
@@ -170,7 +164,7 @@ const AdminCoursePage = () => {
                     <td className='border border-gray-400 text-sm px-4 py-2 text-center'>
                       {index + 1}
                     </td>
-                    <td className='hidden flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
+                    <td className='flex flex-items-center justify-center border border-gray-400 text-sm px-4 py-2'>
                       <div className='w-12 h-12 bg-white rounded-full shadow border-4 overflow-hidden'>
                         <Image 
                           src={`https://d1aet42jaoyd8g.cloudfront.net/LCPJI/${student?.poolId}.jpg`}
@@ -222,8 +216,6 @@ const AdminCoursePage = () => {
                       Ver
                     </a>
                   </td>
-
-
                 </tr>
               ))}
             </tbody>

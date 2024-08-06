@@ -70,6 +70,15 @@ const schema = a.schema({
       isPresent: a.boolean().default(false),
     }).authorization((allow) => [allow.publicApiKey()]),
 
+    Teacher: a.model({
+      email: a.string().required(),
+      name: a.string().required(),
+      cognitoId: a.string(),
+      pictureName: a.string(),
+      courses: a.hasMany('Course', 'teacherId'),
+    })
+      .identifier(['email'])
+
     StudentByCognitoIDResponse: a.customType({
       id: a.string(),
       name: a.string(),
