@@ -16,6 +16,7 @@ export const onCreateAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -73,6 +74,52 @@ export const onCreateCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateCourseStudent = /* GraphQL */ `
+  subscription OnCreateCourseStudent(
+    $filter: ModelSubscriptionCourseStudentFilterInput
+  ) {
+    onCreateCourseStudent(filter: $filter) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -87,21 +134,12 @@ export const onCreateStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -132,16 +170,31 @@ export const onCreateStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateTeacher = /* GraphQL */ `
+  subscription OnCreateTeacher($filter: ModelSubscriptionTeacherFilterInput) {
+    onCreateTeacher(filter: $filter) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }
@@ -172,6 +225,7 @@ export const onDeleteAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -229,6 +283,52 @@ export const onDeleteCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteCourseStudent = /* GraphQL */ `
+  subscription OnDeleteCourseStudent(
+    $filter: ModelSubscriptionCourseStudentFilterInput
+  ) {
+    onDeleteCourseStudent(filter: $filter) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -243,21 +343,12 @@ export const onDeleteStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -288,16 +379,31 @@ export const onDeleteStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteTeacher = /* GraphQL */ `
+  subscription OnDeleteTeacher($filter: ModelSubscriptionTeacherFilterInput) {
+    onDeleteTeacher(filter: $filter) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }
@@ -328,6 +434,7 @@ export const onUpdateAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -385,6 +492,52 @@ export const onUpdateCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateCourseStudent = /* GraphQL */ `
+  subscription OnUpdateCourseStudent(
+    $filter: ModelSubscriptionCourseStudentFilterInput
+  ) {
+    onUpdateCourseStudent(filter: $filter) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -399,21 +552,12 @@ export const onUpdateStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -444,16 +588,31 @@ export const onUpdateStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateTeacher = /* GraphQL */ `
+  subscription OnUpdateTeacher($filter: ModelSubscriptionTeacherFilterInput) {
+    onUpdateTeacher(filter: $filter) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }

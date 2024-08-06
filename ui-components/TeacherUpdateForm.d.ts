@@ -1,6 +1,6 @@
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { Student } from "./graphql/types";
+import { Teacher } from "./graphql/types";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -16,38 +16,35 @@ export declare type ValidationResponse = {
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type StudentUpdateFormInputValues = {
+export declare type TeacherUpdateFormInputValues = {
     email?: string;
     name?: string;
-    carne?: string;
     cognitoId?: string;
     pictureName?: string;
 };
-export declare type StudentUpdateFormValidationValues = {
+export declare type TeacherUpdateFormValidationValues = {
     email?: ValidationFunction<string>;
     name?: ValidationFunction<string>;
-    carne?: ValidationFunction<string>;
     cognitoId?: ValidationFunction<string>;
     pictureName?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type StudentUpdateFormOverridesProps = {
-    StudentUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type TeacherUpdateFormOverridesProps = {
+    TeacherUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     email?: PrimitiveOverrideProps<TextFieldProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
-    carne?: PrimitiveOverrideProps<TextFieldProps>;
     cognitoId?: PrimitiveOverrideProps<TextFieldProps>;
     pictureName?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type StudentUpdateFormProps = React.PropsWithChildren<{
-    overrides?: StudentUpdateFormOverridesProps | undefined | null;
+export declare type TeacherUpdateFormProps = React.PropsWithChildren<{
+    overrides?: TeacherUpdateFormOverridesProps | undefined | null;
 } & {
     email?: string;
-    student?: Student;
-    onSubmit?: (fields: StudentUpdateFormInputValues) => StudentUpdateFormInputValues;
-    onSuccess?: (fields: StudentUpdateFormInputValues) => void;
-    onError?: (fields: StudentUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: StudentUpdateFormInputValues) => StudentUpdateFormInputValues;
-    onValidate?: StudentUpdateFormValidationValues;
+    teacher?: Teacher;
+    onSubmit?: (fields: TeacherUpdateFormInputValues) => TeacherUpdateFormInputValues;
+    onSuccess?: (fields: TeacherUpdateFormInputValues) => void;
+    onError?: (fields: TeacherUpdateFormInputValues, errorMessage: string) => void;
+    onChange?: (fields: TeacherUpdateFormInputValues) => TeacherUpdateFormInputValues;
+    onValidate?: TeacherUpdateFormValidationValues;
 } & React.CSSProperties>;
-export default function StudentUpdateForm(props: StudentUpdateFormProps): React.ReactElement;
+export default function TeacherUpdateForm(props: TeacherUpdateFormProps): React.ReactElement;

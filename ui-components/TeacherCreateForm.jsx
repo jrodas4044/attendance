@@ -4,9 +4,9 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { createStudent } from "./graphql/mutations";
+import { createTeacher } from "./graphql/mutations";
 const client = generateClient();
-export default function StudentCreateForm(props) {
+export default function TeacherCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -20,13 +20,11 @@ export default function StudentCreateForm(props) {
   const initialValues = {
     email: "",
     name: "",
-    carne: "",
     cognitoId: "",
     pictureName: "",
   };
   const [email, setEmail] = React.useState(initialValues.email);
   const [name, setName] = React.useState(initialValues.name);
-  const [carne, setCarne] = React.useState(initialValues.carne);
   const [cognitoId, setCognitoId] = React.useState(initialValues.cognitoId);
   const [pictureName, setPictureName] = React.useState(
     initialValues.pictureName
@@ -35,7 +33,6 @@ export default function StudentCreateForm(props) {
   const resetStateValues = () => {
     setEmail(initialValues.email);
     setName(initialValues.name);
-    setCarne(initialValues.carne);
     setCognitoId(initialValues.cognitoId);
     setPictureName(initialValues.pictureName);
     setErrors({});
@@ -43,7 +40,6 @@ export default function StudentCreateForm(props) {
   const validations = {
     email: [{ type: "Required" }],
     name: [{ type: "Required" }],
-    carne: [],
     cognitoId: [],
     pictureName: [],
   };
@@ -75,7 +71,6 @@ export default function StudentCreateForm(props) {
         let modelFields = {
           email,
           name,
-          carne,
           cognitoId,
           pictureName,
         };
@@ -108,7 +103,7 @@ export default function StudentCreateForm(props) {
             }
           });
           await client.graphql({
-            query: createStudent.replaceAll("__typename", ""),
+            query: createTeacher.replaceAll("__typename", ""),
             variables: {
               input: {
                 ...modelFields,
@@ -128,7 +123,7 @@ export default function StudentCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "StudentCreateForm")}
+      {...getOverrideProps(overrides, "TeacherCreateForm")}
       {...rest}
     >
       <TextField
@@ -142,7 +137,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email: value,
               name,
-              carne,
               cognitoId,
               pictureName,
             };
@@ -170,7 +164,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name: value,
-              carne,
               cognitoId,
               pictureName,
             };
@@ -188,34 +181,6 @@ export default function StudentCreateForm(props) {
         {...getOverrideProps(overrides, "name")}
       ></TextField>
       <TextField
-        label="Carne"
-        isRequired={false}
-        isReadOnly={false}
-        value={carne}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              email,
-              name,
-              carne: value,
-              cognitoId,
-              pictureName,
-            };
-            const result = onChange(modelFields);
-            value = result?.carne ?? value;
-          }
-          if (errors.carne?.hasError) {
-            runValidationTasks("carne", value);
-          }
-          setCarne(value);
-        }}
-        onBlur={() => runValidationTasks("carne", carne)}
-        errorMessage={errors.carne?.errorMessage}
-        hasError={errors.carne?.hasError}
-        {...getOverrideProps(overrides, "carne")}
-      ></TextField>
-      <TextField
         label="Cognito id"
         isRequired={false}
         isReadOnly={false}
@@ -226,7 +191,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name,
-              carne,
               cognitoId: value,
               pictureName,
             };
@@ -254,7 +218,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name,
-              carne,
               cognitoId,
               pictureName: value,
             };

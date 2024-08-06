@@ -17,6 +17,7 @@ export const createAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -80,6 +81,53 @@ export const createCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createCourseStudent = /* GraphQL */ `
+  mutation CreateCourseStudent(
+    $condition: ModelCourseStudentConditionInput
+    $input: CreateCourseStudentInput!
+  ) {
+    createCourseStudent(condition: $condition, input: $input) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -97,21 +145,12 @@ export const createStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -143,16 +182,34 @@ export const createStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createTeacher = /* GraphQL */ `
+  mutation CreateTeacher(
+    $condition: ModelTeacherConditionInput
+    $input: CreateTeacherInput!
+  ) {
+    createTeacher(condition: $condition, input: $input) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }
@@ -187,6 +244,7 @@ export const deleteAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -250,6 +308,53 @@ export const deleteCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteCourseStudent = /* GraphQL */ `
+  mutation DeleteCourseStudent(
+    $condition: ModelCourseStudentConditionInput
+    $input: DeleteCourseStudentInput!
+  ) {
+    deleteCourseStudent(condition: $condition, input: $input) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -267,21 +372,12 @@ export const deleteStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -313,16 +409,34 @@ export const deleteStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteTeacher = /* GraphQL */ `
+  mutation DeleteTeacher(
+    $condition: ModelTeacherConditionInput
+    $input: DeleteTeacherInput!
+  ) {
+    deleteTeacher(condition: $condition, input: $input) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }
@@ -357,6 +471,7 @@ export const updateAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -420,6 +535,53 @@ export const updateCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateCourseStudent = /* GraphQL */ `
+  mutation UpdateCourseStudent(
+    $condition: ModelCourseStudentConditionInput
+    $input: UpdateCourseStudentInput!
+  ) {
+    updateCourseStudent(condition: $condition, input: $input) {
+      course {
+        careerId
+        createdAt
+        days
+        id
+        name
+        scheduleEnd
+        scheduleStart
+        teacherEmail
+        updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
       updatedAt
       __typename
     }
@@ -437,21 +599,12 @@ export const updateStudent = /* GraphQL */ `
       }
       carne
       cognitoId
-      courseId
       courses {
-        careerId
-        createdAt
-        days
-        id
-        name
-        scheduleEnd
-        scheduleStart
-        updatedAt
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -483,16 +636,34 @@ export const updateStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateTeacher = /* GraphQL */ `
+  mutation UpdateTeacher(
+    $condition: ModelTeacherConditionInput
+    $input: UpdateTeacherInput!
+  ) {
+    updateTeacher(condition: $condition, input: $input) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }

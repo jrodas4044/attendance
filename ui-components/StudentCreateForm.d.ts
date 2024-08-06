@@ -16,26 +16,26 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type StudentCreateFormInputValues = {
-    cognitoId?: string;
+    email?: string;
     name?: string;
     carne?: string;
-    email?: string;
+    cognitoId?: string;
     pictureName?: string;
 };
 export declare type StudentCreateFormValidationValues = {
-    cognitoId?: ValidationFunction<string>;
+    email?: ValidationFunction<string>;
     name?: ValidationFunction<string>;
     carne?: ValidationFunction<string>;
-    email?: ValidationFunction<string>;
+    cognitoId?: ValidationFunction<string>;
     pictureName?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type StudentCreateFormOverridesProps = {
     StudentCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    cognitoId?: PrimitiveOverrideProps<TextFieldProps>;
+    email?: PrimitiveOverrideProps<TextFieldProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     carne?: PrimitiveOverrideProps<TextFieldProps>;
-    email?: PrimitiveOverrideProps<TextFieldProps>;
+    cognitoId?: PrimitiveOverrideProps<TextFieldProps>;
     pictureName?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type StudentCreateFormProps = React.PropsWithChildren<{

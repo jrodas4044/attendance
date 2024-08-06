@@ -9,7 +9,7 @@ import { updateStudent } from "./graphql/mutations";
 const client = generateClient();
 export default function StudentUpdateForm(props) {
   const {
-    id: idProp,
+    email: emailProp,
     student: studentModelProp,
     onSuccess,
     onError,
@@ -20,16 +20,16 @@ export default function StudentUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    cognitoId: "",
+    email: "",
     name: "",
     carne: "",
-    email: "",
+    cognitoId: "",
     pictureName: "",
   };
-  const [cognitoId, setCognitoId] = React.useState(initialValues.cognitoId);
+  const [email, setEmail] = React.useState(initialValues.email);
   const [name, setName] = React.useState(initialValues.name);
   const [carne, setCarne] = React.useState(initialValues.carne);
-  const [email, setEmail] = React.useState(initialValues.email);
+  const [cognitoId, setCognitoId] = React.useState(initialValues.cognitoId);
   const [pictureName, setPictureName] = React.useState(
     initialValues.pictureName
   );
@@ -38,34 +38,34 @@ export default function StudentUpdateForm(props) {
     const cleanValues = studentRecord
       ? { ...initialValues, ...studentRecord }
       : initialValues;
-    setCognitoId(cleanValues.cognitoId);
+    setEmail(cleanValues.email);
     setName(cleanValues.name);
     setCarne(cleanValues.carne);
-    setEmail(cleanValues.email);
+    setCognitoId(cleanValues.cognitoId);
     setPictureName(cleanValues.pictureName);
     setErrors({});
   };
   const [studentRecord, setStudentRecord] = React.useState(studentModelProp);
   React.useEffect(() => {
     const queryData = async () => {
-      const record = idProp
+      const record = emailProp
         ? (
             await client.graphql({
               query: getStudent.replaceAll("__typename", ""),
-              variables: { id: idProp },
+              variables: { email: emailProp },
             })
           )?.data?.getStudent
         : studentModelProp;
       setStudentRecord(record);
     };
     queryData();
-  }, [idProp, studentModelProp]);
+  }, [emailProp, studentModelProp]);
   React.useEffect(resetStateValues, [studentRecord]);
   const validations = {
-    cognitoId: [],
+    email: [{ type: "Required" }],
     name: [{ type: "Required" }],
     carne: [],
-    email: [],
+    cognitoId: [],
     pictureName: [],
   };
   const runValidationTasks = async (
@@ -94,10 +94,10 @@ export default function StudentUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          cognitoId: cognitoId ?? null,
+          email,
           name,
           carne: carne ?? null,
-          email: email ?? null,
+          cognitoId: cognitoId ?? null,
           pictureName: pictureName ?? null,
         };
         const validationResponses = await Promise.all(
@@ -132,7 +132,7 @@ export default function StudentUpdateForm(props) {
             query: updateStudent.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: studentRecord.id,
+                email: studentRecord.email,
                 ...modelFields,
               },
             },
@@ -151,32 +151,32 @@ export default function StudentUpdateForm(props) {
       {...rest}
     >
       <TextField
-        label="Cognito id"
-        isRequired={false}
-        isReadOnly={false}
-        value={cognitoId}
+        label="Email"
+        isRequired={true}
+        isReadOnly={true}
+        value={email}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              cognitoId: value,
+              email: value,
               name,
               carne,
-              email,
+              cognitoId,
               pictureName,
             };
             const result = onChange(modelFields);
-            value = result?.cognitoId ?? value;
+            value = result?.email ?? value;
           }
-          if (errors.cognitoId?.hasError) {
-            runValidationTasks("cognitoId", value);
+          if (errors.email?.hasError) {
+            runValidationTasks("email", value);
           }
-          setCognitoId(value);
+          setEmail(value);
         }}
-        onBlur={() => runValidationTasks("cognitoId", cognitoId)}
-        errorMessage={errors.cognitoId?.errorMessage}
-        hasError={errors.cognitoId?.hasError}
-        {...getOverrideProps(overrides, "cognitoId")}
+        onBlur={() => runValidationTasks("email", email)}
+        errorMessage={errors.email?.errorMessage}
+        hasError={errors.email?.hasError}
+        {...getOverrideProps(overrides, "email")}
       ></TextField>
       <TextField
         label="Name"
@@ -187,10 +187,10 @@ export default function StudentUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              cognitoId,
+              email,
               name: value,
               carne,
-              email,
+              cognitoId,
               pictureName,
             };
             const result = onChange(modelFields);
@@ -215,10 +215,10 @@ export default function StudentUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              cognitoId,
+              email,
               name,
               carne: value,
-              email,
+              cognitoId,
               pictureName,
             };
             const result = onChange(modelFields);
@@ -235,32 +235,32 @@ export default function StudentUpdateForm(props) {
         {...getOverrideProps(overrides, "carne")}
       ></TextField>
       <TextField
-        label="Email"
+        label="Cognito id"
         isRequired={false}
         isReadOnly={false}
-        value={email}
+        value={cognitoId}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              cognitoId,
+              email,
               name,
               carne,
-              email: value,
+              cognitoId: value,
               pictureName,
             };
             const result = onChange(modelFields);
-            value = result?.email ?? value;
+            value = result?.cognitoId ?? value;
           }
-          if (errors.email?.hasError) {
-            runValidationTasks("email", value);
+          if (errors.cognitoId?.hasError) {
+            runValidationTasks("cognitoId", value);
           }
-          setEmail(value);
+          setCognitoId(value);
         }}
-        onBlur={() => runValidationTasks("email", email)}
-        errorMessage={errors.email?.errorMessage}
-        hasError={errors.email?.hasError}
-        {...getOverrideProps(overrides, "email")}
+        onBlur={() => runValidationTasks("cognitoId", cognitoId)}
+        errorMessage={errors.cognitoId?.errorMessage}
+        hasError={errors.cognitoId?.hasError}
+        {...getOverrideProps(overrides, "cognitoId")}
       ></TextField>
       <TextField
         label="Picture name"
@@ -271,10 +271,10 @@ export default function StudentUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              cognitoId,
+              email,
               name,
               carne,
-              email,
+              cognitoId,
               pictureName: value,
             };
             const result = onChange(modelFields);
@@ -301,7 +301,7 @@ export default function StudentUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || studentModelProp)}
+          isDisabled={!(emailProp || studentModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -313,7 +313,7 @@ export default function StudentUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || studentModelProp) ||
+              !(emailProp || studentModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

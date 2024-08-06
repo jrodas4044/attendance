@@ -1,4 +1,4 @@
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
 import {auth} from "../auth/resource";
 
 /*== STEP 1 ===============================================================
@@ -7,6 +7,11 @@ adding a new "isDone" field as a boolean. The authorization rule below
 specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
+export const getCognitoUserByEmail = defineFunction({
+  entry: './getCognitoUserByEmail.ts',
+});
+
+
 const schema = a.schema({
   Todo: a
     .model({
@@ -81,6 +86,15 @@ const schema = a.schema({
     })
       .identifier(['email'])
       .authorization((allow) => [allow.publicApiKey()]),
+
+    getCognitoUserByEmail: a.
+      query()
+      .arguments({ email: a.string().required() })
+      .returns(a.string())
+      .authorization((allow) => [allow.publicApiKey()])
+      .handler(a.handler.function('getCognitoUserByEmail'))
+    ,
+
 
     StudentByCognitoIDResponse: a.customType({
       id: a.string(),

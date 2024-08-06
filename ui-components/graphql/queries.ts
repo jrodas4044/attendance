@@ -14,6 +14,7 @@ export const getAttendanceControl = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -71,22 +72,25 @@ export const getCourse = /* GraphQL */ `
         nextToken
         __typename
       }
+      teacher {
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      teacherEmail
       updatedAt
       __typename
     }
   }
 `;
-export const getStudent = /* GraphQL */ `
-  query GetStudent($id: ID!) {
-    getStudent(id: $id) {
-      StudentAttendances {
-        nextToken
-        __typename
-      }
-      carne
-      cognitoId
-      courseId
-      courses {
+export const getCourseStudent = /* GraphQL */ `
+  query GetCourseStudent($id: ID!) {
+    getCourseStudent(id: $id) {
+      course {
         careerId
         createdAt
         days
@@ -94,12 +98,44 @@ export const getStudent = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
+        __typename
+      }
+      courseId
+      createdAt
+      id
+      student {
+        carne
+        cognitoId
+        createdAt
+        email
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const getStudent = /* GraphQL */ `
+  query GetStudent($email: String!) {
+    getStudent(email: $email) {
+      StudentAttendances {
+        nextToken
+        __typename
+      }
+      carne
+      cognitoId
+      courses {
+        nextToken
         __typename
       }
       createdAt
       email
-      id
       name
       pictureName
       updatedAt
@@ -128,16 +164,41 @@ export const getStudentAttendance = /* GraphQL */ `
       student {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
         name
         pictureName
         updatedAt
         __typename
       }
       studentId
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const getStudentByCognitoID = /* GraphQL */ `
+  query GetStudentByCognitoID($cognitoId: String!) {
+    getStudentByCognitoID(cognitoId: $cognitoId) {
+      email
+      id
+      name
+      __typename
+    }
+  }
+`;
+export const getTeacher = /* GraphQL */ `
+  query GetTeacher($email: String!) {
+    getTeacher(email: $email) {
+      cognitoId
+      courses {
+        nextToken
+        __typename
+      }
+      createdAt
+      email
+      name
+      pictureName
       updatedAt
       __typename
     }
@@ -199,6 +260,26 @@ export const listCareers = /* GraphQL */ `
     }
   }
 `;
+export const listCourseStudents = /* GraphQL */ `
+  query ListCourseStudents(
+    $filter: ModelCourseStudentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCourseStudents(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        courseId
+        createdAt
+        id
+        studentId
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const listCourses = /* GraphQL */ `
   query ListCourses(
     $filter: ModelCourseFilterInput
@@ -214,6 +295,7 @@ export const listCourses = /* GraphQL */ `
         name
         scheduleEnd
         scheduleStart
+        teacherEmail
         updatedAt
         __typename
       }
@@ -250,18 +332,53 @@ export const listStudentAttendances = /* GraphQL */ `
 `;
 export const listStudents = /* GraphQL */ `
   query ListStudents(
+    $email: String
     $filter: ModelStudentFilterInput
     $limit: Int
     $nextToken: String
+    $sortDirection: ModelSortDirection
   ) {
-    listStudents(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listStudents(
+      email: $email
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
       items {
         carne
         cognitoId
-        courseId
         createdAt
         email
-        id
+        name
+        pictureName
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const listTeachers = /* GraphQL */ `
+  query ListTeachers(
+    $email: String
+    $filter: ModelTeacherFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listTeachers(
+      email: $email
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        cognitoId
+        createdAt
+        email
         name
         pictureName
         updatedAt

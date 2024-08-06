@@ -4,11 +4,13 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { createStudent } from "./graphql/mutations";
+import { getTeacher } from "./graphql/queries";
+import { updateTeacher } from "./graphql/mutations";
 const client = generateClient();
-export default function StudentCreateForm(props) {
+export default function TeacherUpdateForm(props) {
   const {
-    clearOnSuccess = true,
+    email: emailProp,
+    teacher: teacherModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -20,30 +22,45 @@ export default function StudentCreateForm(props) {
   const initialValues = {
     email: "",
     name: "",
-    carne: "",
     cognitoId: "",
     pictureName: "",
   };
   const [email, setEmail] = React.useState(initialValues.email);
   const [name, setName] = React.useState(initialValues.name);
-  const [carne, setCarne] = React.useState(initialValues.carne);
   const [cognitoId, setCognitoId] = React.useState(initialValues.cognitoId);
   const [pictureName, setPictureName] = React.useState(
     initialValues.pictureName
   );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setEmail(initialValues.email);
-    setName(initialValues.name);
-    setCarne(initialValues.carne);
-    setCognitoId(initialValues.cognitoId);
-    setPictureName(initialValues.pictureName);
+    const cleanValues = teacherRecord
+      ? { ...initialValues, ...teacherRecord }
+      : initialValues;
+    setEmail(cleanValues.email);
+    setName(cleanValues.name);
+    setCognitoId(cleanValues.cognitoId);
+    setPictureName(cleanValues.pictureName);
     setErrors({});
   };
+  const [teacherRecord, setTeacherRecord] = React.useState(teacherModelProp);
+  React.useEffect(() => {
+    const queryData = async () => {
+      const record = emailProp
+        ? (
+            await client.graphql({
+              query: getTeacher.replaceAll("__typename", ""),
+              variables: { email: emailProp },
+            })
+          )?.data?.getTeacher
+        : teacherModelProp;
+      setTeacherRecord(record);
+    };
+    queryData();
+  }, [emailProp, teacherModelProp]);
+  React.useEffect(resetStateValues, [teacherRecord]);
   const validations = {
     email: [{ type: "Required" }],
     name: [{ type: "Required" }],
-    carne: [],
     cognitoId: [],
     pictureName: [],
   };
@@ -75,9 +92,8 @@ export default function StudentCreateForm(props) {
         let modelFields = {
           email,
           name,
-          carne,
-          cognitoId,
-          pictureName,
+          cognitoId: cognitoId ?? null,
+          pictureName: pictureName ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -108,18 +124,16 @@ export default function StudentCreateForm(props) {
             }
           });
           await client.graphql({
-            query: createStudent.replaceAll("__typename", ""),
+            query: updateTeacher.replaceAll("__typename", ""),
             variables: {
               input: {
+                email: teacherRecord.email,
                 ...modelFields,
               },
             },
           });
           if (onSuccess) {
             onSuccess(modelFields);
-          }
-          if (clearOnSuccess) {
-            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -128,13 +142,13 @@ export default function StudentCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "StudentCreateForm")}
+      {...getOverrideProps(overrides, "TeacherUpdateForm")}
       {...rest}
     >
       <TextField
         label="Email"
         isRequired={true}
-        isReadOnly={false}
+        isReadOnly={true}
         value={email}
         onChange={(e) => {
           let { value } = e.target;
@@ -142,7 +156,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email: value,
               name,
-              carne,
               cognitoId,
               pictureName,
             };
@@ -170,7 +183,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name: value,
-              carne,
               cognitoId,
               pictureName,
             };
@@ -188,34 +200,6 @@ export default function StudentCreateForm(props) {
         {...getOverrideProps(overrides, "name")}
       ></TextField>
       <TextField
-        label="Carne"
-        isRequired={false}
-        isReadOnly={false}
-        value={carne}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              email,
-              name,
-              carne: value,
-              cognitoId,
-              pictureName,
-            };
-            const result = onChange(modelFields);
-            value = result?.carne ?? value;
-          }
-          if (errors.carne?.hasError) {
-            runValidationTasks("carne", value);
-          }
-          setCarne(value);
-        }}
-        onBlur={() => runValidationTasks("carne", carne)}
-        errorMessage={errors.carne?.errorMessage}
-        hasError={errors.carne?.hasError}
-        {...getOverrideProps(overrides, "carne")}
-      ></TextField>
-      <TextField
         label="Cognito id"
         isRequired={false}
         isReadOnly={false}
@@ -226,7 +210,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name,
-              carne,
               cognitoId: value,
               pictureName,
             };
@@ -254,7 +237,6 @@ export default function StudentCreateForm(props) {
             const modelFields = {
               email,
               name,
-              carne,
               cognitoId,
               pictureName: value,
             };
@@ -276,13 +258,14 @@ export default function StudentCreateForm(props) {
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Clear"
+          children="Reset"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          {...getOverrideProps(overrides, "ClearButton")}
+          isDisabled={!(emailProp || teacherModelProp)}
+          {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -292,7 +275,10 @@ export default function StudentCreateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={Object.values(errors).some((e) => e?.hasError)}
+            isDisabled={
+              !(emailProp || teacherModelProp) ||
+              Object.values(errors).some((e) => e?.hasError)
+            }
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>
