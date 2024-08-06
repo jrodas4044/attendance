@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
 import {auth} from "../auth/resource";
+import { endianness } from "os";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -51,7 +52,8 @@ const schema = a.schema({
         courseId: a.id(),
         course: a.belongsTo('Course',  'courseId' ),
         date: a.date(),
-        time: a.time(),
+        start: a.datetime(),
+        end: a.datetime(),
         available: a.boolean().default(true),
         studentAttendances: a.hasMany('StudentAttendance', 'attendanceControlId'),
       }).authorization((allow) => [allow.publicApiKey()]),
