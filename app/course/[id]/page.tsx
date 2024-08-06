@@ -108,7 +108,9 @@ const CourseDetail = () => {
                 }
 
                 const currentDate = new Date();
+                // @ts-ignore
                 const start = new Date(attendance.start);
+                // @ts-ignore
                 const end = new Date(attendance.end);
                 const isAvailable = currentDate >= start && currentDate <= end;
 
