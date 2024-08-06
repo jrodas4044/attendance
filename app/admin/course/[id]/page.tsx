@@ -82,6 +82,12 @@ const AdminCoursePage = () => {
 
       const studentPromises = students.map(async (student: any) => {
 
+        const query = await client.queries.getCognitoUserByEmail({
+          email: student.student.email
+        });
+
+        console.log('query', query);
+
         const restOperation = await get({
           apiName: "myHttpApi",
           path: `user/${student.student.email}`

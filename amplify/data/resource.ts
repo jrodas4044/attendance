@@ -92,7 +92,7 @@ const schema = a.schema({
       .arguments({ email: a.string().required() })
       .returns(a.string())
       .authorization((allow) => [allow.publicApiKey()])
-      .handler(a.handler.function('getCognitoUserByEmail'))
+      .handler(a.handler.function(getCognitoUserByEmail))
     ,
 
 
