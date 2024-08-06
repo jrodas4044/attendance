@@ -77,7 +77,7 @@ const schema = a.schema({
       name: a.string().required(),
       cognitoId: a.string(),
       pictureName: a.string(),
-      courses: a.hasMany('Course', 'teacherId'),
+      courses: a.hasMany('Course', 'teacherEmail'),
     })
       .identifier(['email'])
       .authorization((allow) => [allow.publicApiKey()]),
