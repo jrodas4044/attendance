@@ -77,7 +77,7 @@ const schema = a.schema({
       pictureName: a.string(),
       courses: a.hasMany('Course', 'teacherId'),
     })
-      .identifier(['email'])
+      .identifier(['email']),
 
     StudentByCognitoIDResponse: a.customType({
       id: a.string(),
