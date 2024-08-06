@@ -48,6 +48,7 @@ export default function App() {
 
     if (user) {
       fetchStudent();
+      console.log('userCognito: ',user);
     }
   }, [user]);
 

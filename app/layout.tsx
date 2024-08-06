@@ -30,9 +30,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <meta charSet="utf-8" />
         <title>Control de asistencia</title>
-
       </head>
       <body>
       <Authenticator hideSignUp>

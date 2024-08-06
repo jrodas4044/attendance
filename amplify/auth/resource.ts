@@ -20,7 +20,9 @@ export const auth = defineAuth({
     locale: {
       required: false,
     }
-  }
-  });
+  },
+
+  groups: ["ADMINS", "TEACHERS", "STUDENTS"],
+});
 
 
