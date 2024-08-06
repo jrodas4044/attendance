@@ -56,7 +56,7 @@ export default function RootLayout({
             </button>
           </div>
         </header>
-          <main className='container mx-auto my-6 text-gray-700'>
+          <main className='container mx-auto my-6 text-gray-700 px-4'>
             {children}
           </main>
 

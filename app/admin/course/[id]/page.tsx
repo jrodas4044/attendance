@@ -84,7 +84,7 @@ const AdminCoursePage = () => {
 
         const restOperation = await get({
           apiName: "myHttpApi",
-          path: `/user/${student.student.email}`
+          path: `user/${student.student.email}`
         });
           
 
