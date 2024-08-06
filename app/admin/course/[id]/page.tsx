@@ -86,28 +86,23 @@ const AdminCoursePage = () => {
           email: student.student.email
         });
 
-        console.log('query', data);
-
-        const restOperation = await get({
-          apiName: "myHttpApi",
-          path: `user/${student.student.email}`
-        });
-          
-
-         const { body } = await restOperation.response;
-
-        const json = await body.json();
-         const stduent = {
+        if(errors) {
+          return {
             ...student.student,
-            // @ts-ignore
-           poolId: json?.UserAttributes?.find((attr: any) => attr.Name === 'sub')?.Value
+            poolId: null
           }
-          return stduent;
+        }
+
+        return {
+          ...student.student,
+          // @ts-ignore
+         poolId: data
+        };
       });
 
       const studentsResolve = await Promise.all(studentPromises);
       // eliminar los estudiantes que no se pudieron resolver
-      const studentsFiltered = studentsResolve.filter((student: any) => student.poolId !== null);
+      // @ts-ignore
       setStudents(studentsResolve)
       setLoading(false);
     }
