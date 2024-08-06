@@ -204,7 +204,9 @@ const AdminCoursePage = () => {
             {course?.attendanceControls?.map((attendanceControl: any, index: number) => (
                 <tr key={index} >
                   <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.date}</td>
-                  <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.time}</td>
+                  <td className='border border-gray-400 text-sm px-4 py-2'>
+                    {attendanceControl.start} - {attendanceControl.end}
+                    </td>
                   <td
                     className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.available ? 'Si' : 'No'}</td>
                   <td

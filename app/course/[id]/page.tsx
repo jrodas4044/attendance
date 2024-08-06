@@ -19,6 +19,7 @@ const CourseDetail = () => {
   const params = useParams();
   const id = params.id || null;
   const [user, setUser] = useState<any>(null);
+  const [student, setStudent] = useState<any>(null);
   const [marked, setMarked] = useState(false); // El usuario actual marcó la asistencia
   const [course, setCourse] = useState<any>(null);
   const [attendances, setAttendances] = useState<any>([]);
@@ -38,6 +39,29 @@ const CourseDetail = () => {
       fetchUser();
 
     }, []);
+
+    useEffect(() => {
+      const fetchStudent = async () => {
+        try {
+          const { data: student } = await client.models.Student.get({
+            // @ts-ignore
+            email: user.signInDetails.loginId
+          }, {
+            selectionSet: ['name', 'email', 'courses.course.*']
+          });
+    
+          setStudent(student);
+        } catch (error) {
+          console.error("Error fetching student:", error);
+        } finally {
+        }
+      };
+  
+      if (user) {
+        fetchStudent();
+        console.log('userCognito: ',user);
+      }
+    }, [user]);
 
   // Obtener el curso y las asistencias
   useEffect(() => {
@@ -65,30 +89,35 @@ const CourseDetail = () => {
             // Obtener asistencias de estudiantes de manera asíncrona
             const attendancesWithStudentAttendances = await Promise.all(
               attendances.map(async (attendance) => {
-                const { data: studentAttendances } = await attendance.studentAttendances();
-                return { ...attendance, studentAttendances };
+                const { data: studentAttendances } = await client.models.AttendanceControl.get({
+                  id: attendance.id,
+                }, {
+                  selectionSet: ['studentAttendances.student.*'],
+                });
+              
+                let isPresent = false;
+                // @ts-ignore
+                const hasMyUser = studentAttendances.studentAttendances.find((studentAttendance: any) => {
+                  return studentAttendance.student.email === user.signInDetails.loginId;
+                });
+
+                console.log('hasMyUser: ', hasMyUser);
+
+                if (hasMyUser !== undefined) {
+                  isPresent = true;
+                }
+
+                const currentDate = new Date();
+                const start = new Date(attendance.start);
+                const end = new Date(attendance.end);
+                const isAvailable = currentDate >= start && currentDate <= end;
+
+                return { ...attendance, isPresent, isAvailable };
               })
             );
 
-            const studentAttendances =  attendancesWithStudentAttendances.map((attendance) => {
-              return attendance.studentAttendances;
-            });
-
-
-            // filtrar asistencias del estudiante actual
-            studentAttendances.forEach((attendance) => {
-              const studentAttendance = attendance.find(
-                (item) => {
-                    return item.studentId === user.signInDetails.loginId;
-                }
-              );
-
-              if (studentAttendance) {
-                // @ts-ignore
-                setMarked(studentAttendance.isPresent);
-              }
-            });
-
+          
+            setAttendances(attendancesWithStudentAttendances);
           }
         }
       } catch (error) {
@@ -115,30 +144,35 @@ const CourseDetail = () => {
             {attendances.length > 0 ? (
               attendances.map((attendance: any) => (
                 <div
-                  className='flex items-center justify-between bg-white shadow rounded-2xl border p-4 my-4 text-xs'
+                  className='grid grid-cols-3 bg-white shadow rounded-2xl border p-4 my-4 text-xs'
                   key={attendance.id}
                 >
                   <div>
                     <p>
-                      <strong>Fecha:</strong> {new Date(attendance.date).toLocaleDateString()}
+                      <strong>Fecha:</strong> {new Date(attendance.date).toLocaleString()}
                     </p>
                     <p>
-                      <strong>Disponible:</strong>
-                      {attendance.available ? (
+                      <strong>Disponible:</strong> De las {new Date(attendance.start).toLocaleTimeString()} a las {new Date(attendance.end).toLocaleTimeString()}
+                    </p>
+                    <p>
+                      <strong>Activo:</strong>
+                      {attendance.isAvailable ? (
                         <span className='text-green-500'>Sí</span>
                       ) : (
                         <span className='text-red-500'>No</span>
                       )}
                     </p>
                   </div>
-                  <div>
-                    <strong className={'mr-2'}>Marcado:</strong>
-                    {marked ? (
+                  <div className='flex flex-col items-center justify-center'>
+                    <strong className={'mr-2'}>¿Asistió?: </strong>
+                    {attendance.isPresent ? (
+
+  
                       <span className='text-green-500'>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6">
                           <path
-                                d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
+                            d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
                         </svg>
 
                       </span>
@@ -147,7 +181,7 @@ const CourseDetail = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6">
                           <path
-                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
 
                       </span>
@@ -155,15 +189,16 @@ const CourseDetail = () => {
 
                   </div>
 
-                  <div className={'flex items-center justify-center '}>
-                    {attendance.available && !marked ? (
+                  <div  className={'flex items-center justify-end '}>
+                    {attendance.isAvailable &&  !attendance.isPresent  ? (
                       <Link href={`/attendance/${attendance.id}`}
                             className={'cursor-pointer bg-blue-400 shadow rounded-full p-2 hover:bg-blue-600'}
                       >
+      
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" className="size-6 text-white">
                           <path
-                                d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
+                            d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
                         </svg>
                       </Link>
                     ) : (
