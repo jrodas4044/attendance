@@ -9,6 +9,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { useParams } from 'next/navigation';
 // Buscar usuarios de cognito a través de la API de Amplify
 import { get } from 'aws-amplify/api';
+import { isEmail } from '@/utils/validator';
 
 Amplify.configure(outputs);
 const existingConfig = Amplify.getConfig();
@@ -67,30 +68,46 @@ const AttendaceControlPage = () => {
     const fetchStudents = async () => {
       const { data: course } = await client.models.Course.get({
         // @ts-ignore
-        id: attendanceControl.course.id
+        id: attendanceControl?.course?.id
       }, {
         // @ts-ignore
         selectionSet: ["students.student.*"]
       });
 
-      // @ts-ignore
-      const attendedStudentsEmails = attendanceControl.studentAttendances.map((attendance: any) => attendance.student.email);
-
-      // @ts-ignore
-      const studentsWithoutAttendanceFilter = course.students.filter((student: any) => {
-        // Asegúrate de que student.student y student.student.email existan
-        console.log(student?.student?.email)
-        return !attendedStudentsEmails.includes(student.student.email);
-      });
+      if (course) {
+      
+        
+        course.students = course.students.filter((student: any, index: number, self: any[]) => {
+          return student.student !== null && student.student.email !== null , isEmail(student.student.email)    && self.findIndex((s) => s.student.email === student.student.email) === index;
+        });
 
 
-      setTotalAttended(attendedStudentsEmails.length)
-      // @ts-ignore
-      setTotalStudent(course.students.length)
-      setTotalNoAttended(studentsWithoutAttendanceFilter.length)
-      // @ts-ignore
-      setStudentWithOutAttendance(studentsWithoutAttendanceFilter);
-      setLoading(true)
+        attendanceControl.studentAttendances = attendanceControl?.studentAttendances.filter((student: any, index: number, self: any[]) => {
+          return student.student !== null && student.student.email !== null && self.findIndex((s) => s.student.email === student.student.email) === index;
+        }).sort((a: any, b: any) => {
+          return a.student.name.localeCompare(b.student.name);
+        });
+        // @ts-ignore
+        const attendedStudentsEmails = attendanceControl?.studentAttendances.map((attendance: any) => attendance.student.email);
+
+        // @ts-ignore
+        const studentsWithoutAttendanceFilter = course.students
+          .filter((student: any) => {
+            return !attendedStudentsEmails.includes(student.student.email);
+          })
+          .sort((a: any, b: any) => {
+            return a.student.name.localeCompare(b.student.name);
+          });
+       
+
+        setTotalAttended(attendedStudentsEmails.length)
+        // @ts-ignore
+        setTotalStudent(course.students.length)
+        setTotalNoAttended(studentsWithoutAttendanceFilter.length)
+        // @ts-ignore
+        setStudentWithOutAttendance(studentsWithoutAttendanceFilter);
+        setLoading(true)
+      }
     }
 
     if (attendanceControl !== null) {
@@ -113,6 +130,7 @@ const AttendaceControlPage = () => {
     });
 
   }
+
 
   return (
     <div>
@@ -172,18 +190,8 @@ const AttendaceControlPage = () => {
           </div>
 
 
-          {attendanceControl?.studentAttendances.map((item:any, index) => (
-            <div key={index} className='grid grid-cols-3 p-4 bg-white border my-4 shadow rounded-2xl text-xs'>
-              <div>
-                {item.student.name}
-              </div>
-              <div>
-                {item.student.email}
-              </div>
-            </div>
-          ))
-          }
 
+        
           {
             // @ts-ignore
             studentWithOutAttendance.map((item:any, index) => (
@@ -198,6 +206,18 @@ const AttendaceControlPage = () => {
             ))
           }
 
+
+          {attendanceControl?.studentAttendances.map((item:any, index) => (
+            <div key={index} className='grid grid-cols-3 p-4 bg-white border my-4 shadow rounded-2xl text-xs'>
+              <div>
+                {item.student.name}
+              </div>
+              <div>
+                {item.student.email}
+              </div>
+            </div>
+          ))
+          }
         </div>
       )}
     </div>
