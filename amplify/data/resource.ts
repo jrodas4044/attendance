@@ -36,6 +36,8 @@ const schema = a.schema({
       careerId: a.id(),
       career: a.belongsTo('Career', 'careerId'),
       students: a.hasMany('CourseStudent', 'courseId'),
+      teacherEmail: a.string(),
+      teacher: a.belongsTo('Teacher', 'teacherEmail'),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
@@ -77,7 +79,8 @@ const schema = a.schema({
       pictureName: a.string(),
       courses: a.hasMany('Course', 'teacherId'),
     })
-      .identifier(['email']),
+      .identifier(['email'])
+      .authorization((allow) => [allow.publicApiKey()]),
 
     StudentByCognitoIDResponse: a.customType({
       id: a.string(),
