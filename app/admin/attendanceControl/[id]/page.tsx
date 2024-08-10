@@ -12,6 +12,15 @@ import { get } from 'aws-amplify/api';
 import { isEmail } from '@/utils/validator';
 import moment from 'moment-timezone';
 import Spinner from "@cloudscape-design/components/spinner";
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import Button from "@cloudscape-design/components/button";
+import Container from "@cloudscape-design/components/container";
+import Header from "@cloudscape-design/components/header";
+import FormField from "@cloudscape-design/components/form-field";
+import Input from "@cloudscape-design/components/input";
+import DatePicker from "@cloudscape-design/components/date-picker";
+import TimeInput from "@cloudscape-design/components/time-input";
+import Form from "@cloudscape-design/components/form";
 
 Amplify.configure(outputs);
 const existingConfig = Amplify.getConfig();
@@ -50,6 +59,13 @@ const AttendaceControlPage = () => {
   const [reload, setReload] = useState(false)
   const [showSpinner, setShowSpinner] = useState(false)
 
+  const [date, setDate] = React.useState('');
+  const [dateStart, setDateStart] = React.useState('');
+  const [dateEnd, setDateEnd] = React.useState('');
+  const [timeStart, setTimeStart] = React.useState('');
+  const [timeEnd, setTimeEnd] = React.useState('');
+
+
   useEffect(() => {
 
     const fetchAttendanceControl = async () => {
@@ -57,11 +73,21 @@ const AttendaceControlPage = () => {
         // @ts-ignore
         id: id
       },{
-        selectionSet: ['date', 'course.*', 'studentAttendances.student.*', 'studentAttendances.date']
+        selectionSet: ['date',  'start', 'end', 'course.*', 'studentAttendances.student.*', 'studentAttendances.date']
       })
       // @ts-ignore
       setAttendanceControl(attendanceControl)
-      console.log(attendanceControl)
+
+      // @ts-ignore
+      setDate(moment(attendanceControl.date).format("YYYY-MM-DD"));
+      // @ts-ignore
+      setDateStart(moment(attendanceControl.start).format("YYYY-MM-DD"));
+      // @ts-ignore
+      setDateEnd(moment(attendanceControl.end).format("YYYY-MM-DD"));
+      // @ts-ignore
+      setTimeStart(moment(attendanceControl.start).format("HH:mm"));
+      // @ts-ignore
+      setTimeEnd(moment(attendanceControl.end).format("HH:mm"));
     }
 
     fetchAttendanceControl()
@@ -151,7 +177,22 @@ const AttendaceControlPage = () => {
   });
 
   setShowSpinner(true)
+    if (data) {
+      setReload(!reload)
+    }
+  }
 
+  const updateAttendanceControl = async () => {
+    setShowSpinner(true)
+    const { data } = await client.models.AttendanceControl.update({
+      // @ts-ignore
+      id: id,
+      date: moment(date).format('YYYY-MM-DD'),
+      start: moment(`${dateStart} ${timeStart}`, 'YYYY/MM/DD HH:mm').format(),
+      end: moment(`${dateEnd} ${timeEnd}`, 'YYYY/MM/DD HH:mm').format(),
+    });
+
+    
 
     if (data) {
       setReload(!reload)
@@ -165,25 +206,15 @@ const AttendaceControlPage = () => {
       ) : (
         <div>
           <div className='flex items-center justify-between'>
-            <div className='flex justify-center items-center space-x-4'>
-              <div>
-                <a href={`/admin`}>
-                  <h2 className='text-xl font-bold'>{attendanceControl?.course.name}</h2>
-                </a>
-
-                <div>
-                {attendanceControl?.date}
-              </div>
-
-              </div>
-              
-              <div>
-              <div>
+            
+            <div className='w-full'>
+              <Form
+        actions={
+          <SpaceBetween direction="horizontal" size="xs">
+             <div className='flex items-center justify-center space-x-4 text-xs font-bold'>
+             <div>
                  { showSpinner && <Spinner />}
                 </div>
-              </div>
-            </div>
-            <div className='flex items-center justify-center space-x-4 text-xs font-bold'>
               <div className='flex items-center space-x-2 bg-green-400 px-4 py-2 rounded-2xl'>
                 <i>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
@@ -221,6 +252,86 @@ const AttendaceControlPage = () => {
                 </span>
               </div>
             </div>
+            <Button variant="primary"
+              onClick={updateAttendanceControl}
+            >Editar</Button>
+          </SpaceBetween>
+        }
+      >
+        <Container
+         header={
+          <Header variant="h2">
+            <a href={`/admin`}>
+                  <h2 className='text-xl font-bold'>{attendanceControl?.course.name}</h2>
+                </a>
+          </Header>
+        }
+        >
+
+<Container>
+                  <SpaceBetween direction="vertical" size="l">
+            <FormField label="Fecha de asistencia">
+            <DatePicker
+        locale="es_GT"
+        value={date}
+        placeholder="YYYY/MM/DD"
+        onChange={({ detail }) => setDate(detail.value)}
+      />
+            </FormField>
+          <div className="flex items-center space-x-4">
+          <FormField label="Habilitado desde el">
+              <DatePicker
+                  locale="es_GT"
+                  value={dateStart}
+                  placeholder="YYYY/MM/DD"
+                  onChange={({ detail }) => {
+                    setDateStart(detail.value)
+                  }}
+              />
+            </FormField>
+
+
+            <FormField label="A las">
+
+            <TimeInput
+      format="hh:mm"
+      placeholder="hh:mm"
+      use24Hour={true}
+      value={timeStart}
+      onChange={({ detail }) => setTimeStart(detail.value)}
+    />
+            </FormField>
+  
+            <FormField label="Hasta el">
+              <DatePicker
+
+                locale="es_GT"
+                value={dateEnd}
+                placeholder="YYYY/MM/DD"
+                onChange={({ detail }) => setDateEnd(detail.value)}
+              />
+            </FormField>
+
+            <FormField label="A las">
+
+            <TimeInput
+format="hh:mm"
+placeholder="hh:mm"
+use24Hour={true}
+value={timeEnd}
+onChange={({ detail }) => setTimeEnd(detail.value)}
+/>
+</FormField>
+          </div>
+          </SpaceBetween>
+                  </Container>
+
+        </Container>
+
+      </Form>
+                  
+              </div>
+           
           </div>
 
 
