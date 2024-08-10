@@ -169,7 +169,7 @@ const CourseDetail = () => {
         // @ts-ignore
         attendanceControlId: attendanceControl.id,
         // @ts-ignore
-        date: moment().tz('America/Guatemala').format('YYYY-MM-DD HH:mm:ss'),
+        date:  new Date().toISOString(),
         isPresent: true,
       });
 

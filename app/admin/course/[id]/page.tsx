@@ -12,6 +12,11 @@ import {CourseCreateForm, CourseUpdateForm} from "@/ui-components";
 import { get } from 'aws-amplify/api';
 import Image from 'next/image'
 import { isEmail } from '@/utils/validator';
+import Tabs from "@cloudscape-design/components/tabs";
+import Header from "@cloudscape-design/components/header";
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import Button from "@cloudscape-design/components/button";
+import moment from 'moment-timezone';
 
 Amplify.configure(outputs);
 
@@ -62,6 +67,17 @@ const AdminCoursePage = () => {
         });
         // @ts-ignore
         setCourse(course);
+
+        course?.attendanceControls?.map((attendanceControl: any) => {
+          attendanceControl.date = moment(attendanceControl.date).format('DD-MM-YYYY');
+          attendanceControl.start = moment(attendanceControl.start).format('DD-MM-YYYY HH:mm');
+          attendanceControl.end = moment(attendanceControl.end).format('DD-MM-YYY HH:mm');
+          return attendanceControl;
+        });
+
+      
+        
+          
       } catch (error) {
         console.error("Error fetching course:", error);
       } finally {
@@ -125,6 +141,7 @@ const AdminCoursePage = () => {
 
     const json = await body.json();
   }
+  
 
   // @ts-ignore
   return (
@@ -133,10 +150,66 @@ const AdminCoursePage = () => {
         <p>Cargado...</p>
       ) : (
         <div>
-          <div className='bg-white shadow border rounded'>
-            <CourseUpdateForm course={course} />
+
+          <div className='mb-4'>
+          <Header
+      variant="h1"
+      actions={
+        <SpaceBetween direction="horizontal" size="xs">
+          <Button variant="primary">
+            Nueva asistencia
+          </Button>
+        </SpaceBetween>
+      }
+    >
+      Curso: {course?.name}
+    </Header>
           </div>
-          <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
+ <Tabs
+      tabs={[
+        {
+          label: "Asistencias",
+          id: "first",
+          content: (
+            <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
+            <thead className='bg-gray-400'>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Disponible</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {course?.attendanceControls?.map((attendanceControl: any, index: number) => (
+                <tr key={index} >
+                  <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.date}</td>
+                  <td className='border border-gray-400 text-sm px-4 py-2'>
+                    De las {attendanceControl.start} a las {attendanceControl.end}
+                    </td>
+                  <td
+                    className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.available ? 'Si' : 'No'}</td>
+                  <td
+                    className='border border-gray-400 text-sm px-4 py-4 text-center'
+                  >
+                    <a
+                      className={`bg-blue-500 text-white px-4 py-2 rounded`}
+                      href={`/admin/attendanceControl/${attendanceControl?.id}`}
+                    >
+                      Ver
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          )
+        },
+        {
+          label: "Alumnos",
+          id: "second",
+          content: (
+            <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
             <thead className='bg-gray-400'>
               <tr>
                 <th>#</th>
@@ -190,39 +263,20 @@ const AdminCoursePage = () => {
             }
             </tbody>
           </table>
-
-          <table className='table w-full my-4 bg-white rounded shadow overflow-hidden'>
-            <thead className='bg-gray-400'>
-            <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Disponible</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {course?.attendanceControls?.map((attendanceControl: any, index: number) => (
-                <tr key={index} >
-                  <td className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.date}</td>
-                  <td className='border border-gray-400 text-sm px-4 py-2'>
-                    De las {attendanceControl.start} a las {attendanceControl.end}
-                    </td>
-                  <td
-                    className='border border-gray-400 text-sm px-4 py-2'>{attendanceControl.available ? 'Si' : 'No'}</td>
-                  <td
-                    className='border border-gray-400 text-sm px-4 py-4 text-center'
-                  >
-                    <a
-                      className={`bg-blue-500 text-white px-4 py-2 rounded`}
-                      href={`/admin/attendanceControl/${attendanceControl?.id}`}
-                    >
-                      Ver
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          )
+        },
+        {
+          label: "Información",
+          id: "third",
+          content: (
+            <div className='bg-white shadow border rounded'>
+              <CourseUpdateForm course={course} />
+            </div>
+          )
+        }
+      ]}
+      variant="container"
+    />
         </div>
       )
       }

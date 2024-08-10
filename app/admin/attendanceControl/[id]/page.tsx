@@ -10,6 +10,8 @@ import { useParams } from 'next/navigation';
 // Buscar usuarios de cognito a través de la API de Amplify
 import { get } from 'aws-amplify/api';
 import { isEmail } from '@/utils/validator';
+import moment from 'moment-timezone';
+import Spinner from "@cloudscape-design/components/spinner";
 
 Amplify.configure(outputs);
 const existingConfig = Amplify.getConfig();
@@ -45,6 +47,8 @@ const AttendaceControlPage = () => {
   const [totalAttended, setTotalAttended] = useState(0)
   const [totalNoAttended, setTotalNoAttended] = useState(0)
   const [totalStudent, setTotalStudent] = useState(0)
+  const [reload, setReload] = useState(false)
+  const [showSpinner, setShowSpinner] = useState(false)
 
   useEffect(() => {
 
@@ -62,10 +66,11 @@ const AttendaceControlPage = () => {
 
     fetchAttendanceControl()
 
-  }, [id]);
+  }, [id, reload]);
 
   useEffect(() => {
     const fetchStudents = async () => {
+      setShowSpinner(true)
       const { data: course } = await client.models.Course.get({
         // @ts-ignore
         id: attendanceControl?.course?.id
@@ -108,6 +113,7 @@ const AttendaceControlPage = () => {
         // @ts-ignore
         setStudentWithOutAttendance(studentsWithoutAttendanceFilter);
         setLoading(true)
+        setShowSpinner(false)
       }
     }
 
@@ -133,6 +139,25 @@ const AttendaceControlPage = () => {
   }
 
 
+  const saveAttendance = async (email: string) => {
+    setShowSpinner(true)
+    const { data } = await client.models.StudentAttendance.create({
+      studentId: email,
+      // @ts-ignore
+      attendanceControlId: id,
+      // @ts-ignore
+      date: new Date().toISOString(),
+      isPresent: true,
+  });
+
+  setShowSpinner(true)
+
+
+    if (data) {
+      setReload(!reload)
+    }
+  }
+
   return (
     <div>
       {!loading ? (
@@ -140,14 +165,22 @@ const AttendaceControlPage = () => {
       ) : (
         <div>
           <div className='flex items-center justify-between'>
-            <div>
+            <div className='flex justify-center items-center space-x-4'>
               <div>
                 <a href={`/admin`}>
                   <h2 className='text-xl font-bold'>{attendanceControl?.course.name}</h2>
                 </a>
-              </div>
-              <div>
+
+                <div>
                 {attendanceControl?.date}
+              </div>
+
+              </div>
+              
+              <div>
+              <div>
+                 { showSpinner && <Spinner />}
+                </div>
               </div>
             </div>
             <div className='flex items-center justify-center space-x-4 text-xs font-bold'>
@@ -196,12 +229,20 @@ const AttendaceControlPage = () => {
           {
             // @ts-ignore
             studentWithOutAttendance.map((item:any, index) => (
-              <div key={index} className='grid grid-cols-3 p-4 bg-red-200 border my-4 shadow rounded-2xl text-xs'>
-                <div>
+              <div key={index} className='grid grid-cols-4 p-4 bg-red-100 border my-4 shadow rounded-2xl text-xs'>
+                <div className='flex items-center font-bold'>
                   {item.student.name}
                 </div>
-                <div className="col-span-2">
+                <div className="flex items-center col-span-2">
                   {item.student.email}
+                </div>
+
+                <div className='flex justify-end'>
+                   <button className='bg-green-500 text-white px-4 py-2 rounded'
+                      onClick={() => saveAttendance(item.student.email)}
+                   >
+                      Asistió
+                    </button>
                 </div>
               </div>
             ))
@@ -209,8 +250,8 @@ const AttendaceControlPage = () => {
 
 
           {attendanceControl?.studentAttendances.map((item:any, index) => (
-            <div key={index} className='grid grid-cols-3 p-4 bg-white border my-4 shadow rounded-2xl text-xs'>
-              <div>
+            <div key={index} className='grid grid-cols-4 p-4 bg-white border my-4 shadow rounded-2xl text-xs'>
+              <div className='font-bold'>
                 {item.student.name}
               </div>
               <div>

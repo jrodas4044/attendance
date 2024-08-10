@@ -9,19 +9,32 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 import ListCourses from '../components/ListCourses';
-import { jwtDecode } from "jwt-decode";
+import TeacherListCourse from '../components/TeacherListCourse';
+import * as Auth from 'aws-amplify/auth';
+
 
 
 Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
+async function getCurrentUserGroup() {
+  try {
+      const session = await Auth.fetchAuthSession();
+      const userGroups = session.tokens?.accessToken.payload['cognito:groups'];
+      return  userGroups;
+  } catch (error) {
+      console.error('Error fetching user groups:', error);
+      return null;
+  }
+}
+
 export default function App() {
 
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [student, setStudent] = useState<any>(null);
-
+  const [isTeacher, setIsTeacher] = useState<boolean>(false);
   
 
   useEffect(() => {
@@ -46,15 +59,26 @@ export default function App() {
       } catch (error) {
         console.error("Error fetching student:", error);
       } finally {
-        setLoading(false);
       }
     };
 
     if (user) {
-      fetchStudent();
-      fetchAuthSession().then((session) => {
+      getCurrentUserGroup().then(groups => {
+        // @ts-ignore
+        const hasTeacherGroup = groups.find((group: string) => group === 'TEACHERS');
+        if (hasTeacherGroup) {
+          setIsTeacher(true);
+        }
       });
-      //const userGroups = getUserGroups(user);
+
+      if (isTeacher) {
+        console.log('isTeacher: ', isTeacher);
+        setLoading(false);
+        return;
+      }
+      fetchStudent();   
+      setLoading(false);
+     
     }
   }, [user]);
 
@@ -70,7 +94,10 @@ export default function App() {
         </h2>
       </div>
       <div className='my-6'>
-        <ListCourses  student={student} />
+        { 
+          isTeacher ? <TeacherListCourse user={user} /> : 
+          <ListCourses    student={student} />
+        }
       </div>
     </main>
   );
