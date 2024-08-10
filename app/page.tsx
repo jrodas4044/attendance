@@ -9,6 +9,8 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 import ListCourses from '../components/ListCourses';
+import { jwtDecode } from "jwt-decode";
+
 
 Amplify.configure(outputs);
 
@@ -20,11 +22,6 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [student, setStudent] = useState<any>(null);
 
-  const getUserGroups = (user) => {
-    const token = user.signInUserSession.idToken.jwtToken;
-    const decoded = jwtDecode(token); // You'll need jwt-decode library for this
-    return decoded['cognito:groups'] || [];
-  };
   
 
   useEffect(() => {
@@ -55,10 +52,8 @@ export default function App() {
 
     if (user) {
       fetchStudent();
-      const attributes =  fetchAuthSession().then((attributes) => {
-        console.log('attributes: ', attributes);
+      fetchAuthSession().then((session) => {
       });
-      console.log('userCognito: ', attributes);
       //const userGroups = getUserGroups(user);
     }
   }, [user]);
