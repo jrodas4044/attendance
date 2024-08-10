@@ -17,6 +17,8 @@ import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import moment from 'moment-timezone';
+import { AttendanceControlCreateForm } from "@/ui-components";
+import CreateAttendace from '@/components/CreateAttendace';
 
 Amplify.configure(outputs);
 
@@ -73,6 +75,18 @@ const AdminCoursePage = () => {
           attendanceControl.start = moment(attendanceControl.start).format('DD-MM-YYYY HH:mm');
           attendanceControl.end = moment(attendanceControl.end).format('DD-MM-YYY HH:mm');
           return attendanceControl;
+        });
+
+        // Ordenar las asistencias por fecha desde la más reciente a la más antigua
+       const sortedAttendanceControls = course?.attendanceControls?.sort((a: any, b: any) => {
+          return moment(b.date).diff(moment(a.date));
+        });
+
+        // @ts-ignore
+        setCourse({
+          ...course,
+          // @ts-ignore
+          attendanceControls: sortedAttendanceControls
         });
 
       
@@ -154,13 +168,7 @@ const AdminCoursePage = () => {
           <div className='mb-4'>
           <Header
       variant="h1"
-      actions={
-        <SpaceBetween direction="horizontal" size="xs">
-          <Button variant="primary">
-            Nueva asistencia
-          </Button>
-        </SpaceBetween>
-      }
+  
     >
       Curso: {course?.name}
     </Header>
@@ -203,6 +211,13 @@ const AdminCoursePage = () => {
               ))}
             </tbody>
           </table>
+          )
+        },
+        {
+          label: "Nueva asistencia",
+          id: "fourth",
+          content: (
+            <CreateAttendace courseId={courseId} />
           )
         },
         {
