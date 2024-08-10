@@ -168,7 +168,8 @@ const CourseDetail = () => {
         studentId: user.signInDetails.loginId,
         // @ts-ignore
         attendanceControlId: attendanceControl.id,
-        date: new Date(),
+        // @ts-ignore
+        date: moment().tz('America/Guatemala').format('YYYY-MM-DD HH:mm:ss'),
         isPresent: true,
       });
 
