@@ -95,6 +95,7 @@ export default function App() {
       </div>
       <div className='my-6'>
         { 
+          // @ts-ignore
           isTeacher ? <TeacherListCourse user={user} /> : 
           <ListCourses    student={student} />
         }
