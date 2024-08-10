@@ -7,7 +7,7 @@ import "./../app/app.css";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
-import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 import ListCourses from '../components/ListCourses';
 
 Amplify.configure(outputs);
@@ -55,7 +55,7 @@ export default function App() {
 
     if (user) {
       fetchStudent();
-      const attributes =  fetchUserAttributes().then((attributes) => {
+      const attributes =  fetchAuthSession().then((attributes) => {
         console.log('attributes: ', attributes);
       });
       console.log('userCognito: ', attributes);

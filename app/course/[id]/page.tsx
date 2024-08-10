@@ -201,7 +201,7 @@ const CourseDetail = () => {
       Store.addNotification({
         title: "Error",
         message: "Ocurrió un error al guardar tu asistencia",
-        type: "error",
+        type: "danger",
         insert: "top",
         container: "top-right",
         animationIn: ["animate__animated", "animate__fadeIn"],
