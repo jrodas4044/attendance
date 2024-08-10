@@ -162,8 +162,11 @@ const CourseDetail = () => {
         selectionSet: ['id']
       });
 
+      // @ts-ignore
       const { data: studentAttendance } = await client.models.StudentAttendance.create({
+        // @ts-ignore
         studentId: user.signInDetails.loginId,
+        // @ts-ignore
         attendanceControlId: attendanceControl.id,
         date: new Date(),
         isPresent: true,

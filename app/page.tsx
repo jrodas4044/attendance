@@ -20,6 +20,13 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [student, setStudent] = useState<any>(null);
 
+  const getUserGroups = (user) => {
+    const token = user.signInUserSession.idToken.jwtToken;
+    const decoded = jwtDecode(token); // You'll need jwt-decode library for this
+    return decoded['cognito:groups'] || [];
+  };
+  
+
   useEffect(() => {
     getCurrentUser().then((user) => {
       setUser(user);
