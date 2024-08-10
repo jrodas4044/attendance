@@ -10,6 +10,11 @@ import outputs from '@/amplify_outputs.json';
 import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
 import Link from 'next/link';
+import moment from 'moment-timezone';
+import { ReactNotifications } from 'react-notifications-component'
+import { Store } from 'react-notifications-component';
+
+import 'react-notifications-component/dist/theme.css'
 
 Amplify.configure(outputs);
 
@@ -107,18 +112,21 @@ const CourseDetail = () => {
                   isPresent = true;
                 }
 
-                const currentDate = new Date();
+                const currentDate =  moment().tz('America/Guatemala');
                 // @ts-ignore
-                const start = new Date(attendance.start);
+                const start = moment(attendance.start).tz('America/Guatemala').format('DD-MMM-YYYY HH:mm:ss');
                 // @ts-ignore
-                const end = new Date(attendance.end);
-                const isAvailable = currentDate >= start && currentDate <= end;
+                const end = moment(attendance.end).tz('America/Guatemala').format('DD-MMM-YYYY HH:mm:ss');
+                // @ts-ignore
+                const isAvailable = currentDate.isBetween(start, end);
+
+                attendance.date = moment(attendance.date).tz('America/Guatemala').format('DD-MMM-YYYY');
+                attendance.start = start;
+                attendance.end = end;
 
                 return { ...attendance, isPresent, isAvailable };
               })
             );
-
-          
             setAttendances(attendancesWithStudentAttendances);
           }
         }
@@ -136,13 +144,86 @@ const CourseDetail = () => {
 
   if (loading) return <p>Cargando...</p>;
 
+  const saveMyAttendance = async (attendanceId: string) => {
+    try {
+      const { data: student } = await client.models.Student.get({
+        // @ts-ignore
+        email: user.signInDetails.loginId
+      }, {
+        selectionSet: ['email']
+      });
+
+      // @ts-ignore
+      const { data: attendanceControl } = await client.models.AttendanceControl.get({
+        // @ts-ignore
+        id: attendanceId
+      }, {
+        // @ts-ignore
+        selectionSet: ['id']
+      });
+
+      const { data: studentAttendance } = await client.models.StudentAttendance.create({
+        studentId: user.signInDetails.loginId,
+        attendanceControlId: attendanceControl.id,
+        date: new Date(),
+        isPresent: true,
+      });
+
+      Store.addNotification({
+        title: "Asistencia Guardada",
+        message: "Tu asistencia ha sido guardada exitosamente",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 3000,
+          onScreen: true
+        },
+        onRemoval: () => {
+          window.location.reload();
+        }
+      });
+
+      // Actualizar el estado de la asistencia
+      const updatedAttendances = attendances.map((attendance: any) => {
+        if (attendance.id === attendanceId) {
+          return { ...attendance, isPresent: true };
+        }
+        return attendance;
+      });
+    } catch (error) {
+      Store.addNotification({
+        title: "Error",
+        message: "Ocurrió un error al guardar tu asistencia",
+        type: "error",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
+      });
+      console.error("Error saving my attendance:", error);
+    }
+  }
+
+  
+
   return (
     <div>
       {course ? (
         <div>
+          <ReactNotifications />
           <h1 className='text-xl font-bold mb-4 text-center'>{course.name}</h1>
           <div>
             <h2 className='text-lg font-bold'>Asistencias</h2>
+            <span className='text-gray-600 font-bold'>
+              { student?.name }
+            </span>
             {attendances.length > 0 ? (
               attendances.map((attendance: any) => (
                 <div
@@ -151,10 +232,11 @@ const CourseDetail = () => {
                 >
                   <div>
                     <p>
-                      <strong>Fecha:</strong> {new Date(attendance.date).toLocaleString()}
+                      <strong>Fecha:</strong> { attendance.date }
                     </p>
                     <p>
-                      <strong>Disponible:</strong> De las {new Date(attendance.start).toLocaleTimeString()} a las {new Date(attendance.end).toLocaleTimeString()}
+                      <strong>Disponible:</strong> <br />
+                       De las { attendance.start } <br /> a las { attendance.end }
                     </p>
                     <p>
                       <strong>Activo:</strong>
@@ -193,8 +275,9 @@ const CourseDetail = () => {
 
                   <div  className={'flex items-center justify-end '}>
                     {attendance.isAvailable &&  !attendance.isPresent  ? (
-                      <Link href={`/attendance/${attendance.id}`}
+                      <button
                             className={'cursor-pointer bg-blue-400 shadow rounded-full p-2 hover:bg-blue-600'}
+                            onClick={() => saveMyAttendance(attendance.id)}
                       >
       
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -202,7 +285,7 @@ const CourseDetail = () => {
                           <path
                             d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
                         </svg>
-                      </Link>
+                      </button>
                     ) : (
                       <p className='text-red-500'>x</p>
                     )}
